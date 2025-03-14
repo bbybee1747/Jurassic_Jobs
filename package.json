@@ -9,7 +9,8 @@
     "start": "concurrently \"cd client/frontend && bun run dev\" \"cd server && bun run dev\"",
     "build": "npm --prefix client/frontend run build",
     "server": "cd server && bun run dev",
-    "client": "cd client/frontend && bun run dev"
+    "client": "cd client/frontend && bun run dev",
+    "install": "npm --prefix server install && npm --prefix client/frontend install"
   },
   "repository": {
     "type": "git",
