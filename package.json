@@ -6,9 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "setup": "npm --prefix server install && npm --prefix client/frontend install",
-    "start": "npm run server && npm run client",
-    "server": "cd server && npm run dev",
-    "client": "cd client/frontend && npm run dev"
+    "start": "concurrently \"cd client/frontend && bun run dev\" \"cd server && bun run dev\"",
+    "build": "npm --prefix client/frontend run build",
+    "server": "cd server && bun run dev",
+    "client": "cd client/frontend && bun run dev"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   "dependencies": {
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
+    "concurrently": "^9.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
