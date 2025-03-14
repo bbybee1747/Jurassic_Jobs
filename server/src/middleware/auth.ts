@@ -4,7 +4,8 @@ import type { NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 interface JwtPayload {
-  username: string;
+  id: string;
+  email: string;
 }
 
 // Extend Express's Request type to include user property
@@ -35,12 +36,13 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
       return res.status(403).json({ message: 'Invalid or expired token' });
     }
 
-    if (decoded && typeof decoded === 'object' && 'username' in decoded) {
-      req.user = decoded as JwtPayload;  // Attach decoded token to request if valid
-      return next(); // Proceed to the next middleware or route handler
+    if (decoded && typeof decoded === 'object' && 'id' in decoded && 'email' in decoded) {
+      req.user = decoded as JwtPayload;
+      return next();
     } else {
       console.error('Malformed token payload');
       return res.status(403).json({ message: 'Malformed token payload' });
     }
+    
   });
 };
