@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
-import schema from "./schemas";
+import schema from "./src/schemas";
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 
 dotenv.config();
@@ -33,7 +33,6 @@ const startServer = async () => {
   const server = new ApolloServer({ schema });
   await server.start();
 
-  // Explicitly cast the middleware to RequestHandler
   const graphqlMiddleware = expressMiddleware(server, { context }) as unknown as RequestHandler;
 
   app.use("/graphql", express.json(), graphqlMiddleware);
