@@ -1,4 +1,5 @@
 import Dinosaur from '../models/Dinosaur';
+import axios from "axios";
 
 export const dinosaurResolvers = {
   Query: {
@@ -15,6 +16,37 @@ export const dinosaurResolvers = {
         sortObj.age = 1;
       }
       return Dinosaur.find().sort(sortObj);
+    },
+    searchDinosaur: async (_: any, args: { query: string }) => {
+      const { query } = args;
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        throw new Error("Missing OpenAI API key");
+      }
+      
+      try {
+        const response = await axios.post(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            model: "gpt-3.5-turbo",
+            max_tokens: 100,
+            temperature: 0.5,
+            messages: [
+              { role: "system", content: "Give details about the dinosaurs that people are asking about." },],
+          },
+          {
+            headers: {
+              "Authorization": `Bearer ${apiKey}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        
+        return response.data.choices[0].message.content.trim();
+      } catch (error: any) {
+        console.error("Error calling OpenAI API:", error.response?.data || error.message);
+        throw new Error("Failed to fetch dinosaur information.");
+      }
     },
   },
 };

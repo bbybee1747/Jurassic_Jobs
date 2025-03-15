@@ -11,7 +11,8 @@ export const dinosaurTypeDefs = gql`
     description: String
   }
 
-  type Query {
+  extend type Query {
     dinosaurs(sortBy: String): [Dinosaur!]!
+    searchDinosaur(query: String!): String!
   }
 `;

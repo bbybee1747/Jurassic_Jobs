@@ -4,6 +4,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+import "./App.css";
 import { useState } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -13,19 +14,20 @@ import Dinosaurs from "./pages/Dinosaurs";
 import Purchases from "./pages/Purchase";
 import SNESPage from "./pages/SNESPage";
 import DinosaurSearch from "./pages/DinosaurSearch";
-import "./App.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
-      <div className="bg-yellow-300 text-red-600 font-sans min-h-screen flex flex-col">
+      {/* Bold, vibrant gradient background */}
+      <div className="bg-gradient-to-br from-bgStart via-bgMiddle to-bgEnd text-primary font-sans min-h-screen flex flex-col">
         <Header
           isAuthenticated={isAuthenticated}
           setIsAuthenticated={setIsAuthenticated}
         />
-        <main className="flex-grow max-w-4xl mx-auto bg-black border-4 border-blue-600 shadow-lg p-8 rounded-xl">
+        {/* Main content card with shadow, rounded corners, and a vibrant border */}
+        <main className="flex-grow max-w-4xl mx-auto bg-cardBg border border-cardBorder shadow-2xl p-10 rounded-2xl my-8">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

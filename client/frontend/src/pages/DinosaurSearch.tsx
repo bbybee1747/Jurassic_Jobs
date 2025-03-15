@@ -11,11 +11,31 @@ const DinosaurSearch = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:5000/api/search", {
-        query,
-      });
-      setResults(response.data.response);
+      const graphqlQuery = {
+        query: `
+          query SearchDinosaur($query: String!) {
+            searchDinosaur(query: $query)
+          }
+        `,
+        variables: { query },
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/graphql",
+        graphqlQuery,
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("GraphQL Response:", response.data); // Log full response
+
+      if (response.data.errors) {
+        console.error("GraphQL Errors:", response.data.errors);
+        setResults("Error fetching dinosaur information.");
+      } else {
+        setResults(response.data.data.searchDinosaur);
+      }
     } catch (error) {
+      console.error("GraphQL error:", error);
       setResults("Error fetching dinosaur information.");
     }
     setLoading(false);
@@ -33,11 +53,11 @@ const DinosaurSearch = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for a dinosaur..."
-          className="border border-gray-400 p-3 w-full rounded-lg"
+          className="border border-gray-400 p-3 w-full rounded-lg text-gray-900"
         />
         <button
           onClick={handleSearch}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mt-4 w-full"
+          className="bg-blue-600 hover:bg-blue-700 text-primary font-bold py-2 px-4 rounded-lg mt-4 w-full"
         >
           Search
         </button>

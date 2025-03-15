@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@apollo/server": "^4.11.3",
+    "@types/axios": "^0.9.36",
     "@types/express": "^5.0.0",
+    "axios": "^1.8.3",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
