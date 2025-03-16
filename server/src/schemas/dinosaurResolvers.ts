@@ -32,8 +32,12 @@ export const dinosaurResolvers = {
             max_tokens: 100,
             temperature: 0.5,
             messages: [
-              { role: "system", content: "Give details about the dinosaurs that people are asking about." },],
+              { role: "system", content: "You are a knowledgeable dinosaur expert. When given the name of a dinosaur, provide detailed factual information about it including its period, size, habitat, diet, and any interesting characteristics." 
+              },
+              { role: "user", content: query},
+              ],
           },
+          
           {
             headers: {
               "Authorization": `Bearer ${apiKey}`,
