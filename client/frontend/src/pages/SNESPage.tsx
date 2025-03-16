@@ -1,31 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
 
 const JeepDinoGame: React.FC = () => {
-  console.log("🔄 Component rendered");
+  console.log("Component rendered");
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isRunning, setIsRunning] = useState(true);
-  const [speed, setSpeed] = useState(5); // **New: Speed to escape the Dino**
+  const [speed, setSpeed] = useState(5);
   const scoreRef = useRef(0);
 
   useEffect(() => {
-    console.log("🎮 useEffect triggered");
+    console.log("useEffect triggered");
 
     const canvas = canvasRef.current;
     if (!canvas) {
-      console.error("❌ Canvas not found!");
+      console.error("Canvas not found!");
       return;
     }
 
     const ctx = canvas.getContext("2d");
     if (!ctx) {
-      console.error("❌ Unable to get canvas 2D context");
+      console.error("Unable to get canvas 2D context");
       return;
     }
 
-    console.log("✅ Canvas found, initializing game...");
+    console.log("Canvas found, initializing game...");
 
     canvas.width = 800;
     canvas.height = 400;
@@ -33,7 +33,7 @@ const JeepDinoGame: React.FC = () => {
     let jeep = { x: 100, y: 300, width: 80, height: 50, dy: 0, jumping: false };
     let obstacles: { x: number; y: number; width: number; height: number }[] =
       [];
-    let dino = { x: -200, y: 290, width: 100, height: 70, speed: 2 }; // **Fixed Dino Y Position**
+    let dino = { x: -200, y: 290, width: 100, height: 70, speed: 2 };
     let gravity = 0.6;
     let frame = 0;
 
@@ -45,9 +45,9 @@ const JeepDinoGame: React.FC = () => {
 
     const checkImagesLoaded = () => {
       imagesLoaded++;
-      console.log(`✅ Images Loaded: ${imagesLoaded}/${totalImages}`);
+      console.log(`Images Loaded: ${imagesLoaded}/${totalImages}`);
       if (imagesLoaded === totalImages) {
-        console.log("✅ All images loaded, starting game...");
+        console.log("All images loaded, starting game...");
         setIsLoaded(true);
         requestAnimationFrame(update);
       }
@@ -57,10 +57,9 @@ const JeepDinoGame: React.FC = () => {
     dinoImage.onload = checkImagesLoaded;
     obstacleImage.onload = checkImagesLoaded;
 
-    jeepImage.onerror = () => console.error("❌ Failed to load jeep image.");
-    dinoImage.onerror = () => console.error("❌ Failed to load dino image.");
-    obstacleImage.onerror = () =>
-      console.error("❌ Failed to load rock image.");
+    jeepImage.onerror = () => console.error("Failed to load jeep image.");
+    dinoImage.onerror = () => console.error("Failed to load dino image.");
+    obstacleImage.onerror = () => console.error("Failed to load rock image.");
 
     jeepImage.src = "/jeep.png";
     dinoImage.src = "/dino.png";
@@ -68,43 +67,43 @@ const JeepDinoGame: React.FC = () => {
 
     const jump = (event: KeyboardEvent) => {
       if (event.code === "Space" && !jeep.jumping) {
-        console.log("⬆️ Jeep jumping!");
+        console.log("⬆Jeep jumping!");
         jeep.dy = -12;
         jeep.jumping = true;
       }
       if (event.code === "ArrowRight") {
         console.log("🏎️ Jeep speeding up!");
-        setSpeed(8); // **Speed boost**
+        setSpeed(8);
       }
     };
 
     const slowDown = (event: KeyboardEvent) => {
       if (event.code === "ArrowRight") {
-        console.log("🐢 Jeep slowing down.");
-        setSpeed(5); // **Reset speed after releasing Right Arrow**
+        console.log("Jeep slowing down.");
+        setSpeed(5);
       }
     };
 
     const update = () => {
       if (!isRunning) {
-        console.log("⏹️ Game stopped, skipping update.");
+        console.log("Game stopped, skipping update.");
         return;
       }
       if (!canvasRef.current) {
-        console.log("❌ Canvas disappeared!");
+        console.log("Canvas disappeared!");
         return;
       }
 
       const ctx = canvasRef.current.getContext("2d");
       if (!ctx) {
-        console.log("❌ Canvas context missing!");
+        console.log("Canvas context missing!");
         return;
       }
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       frame++;
       scoreRef.current++;
-      console.log(`🎯 Frame: ${frame}, Score: ${scoreRef.current}`);
+      console.log(`Frame: ${frame}, Score: ${scoreRef.current}`);
 
       jeep.y += jeep.dy;
       jeep.dy += gravity;
@@ -121,7 +120,7 @@ const JeepDinoGame: React.FC = () => {
       }
 
       obstacles.forEach((obs, index) => {
-        obs.x -= speed; // **Now affected by speed**
+        obs.x -= speed;
         if (obs.x + obs.width < 0) {
           obstacles.splice(index, 1);
         }
@@ -141,7 +140,7 @@ const JeepDinoGame: React.FC = () => {
           jeep.y + jeep.height - obs.y < 20
         ) {
           console.log(
-            `💀 Collision detected! Jeep (y=${jeep.y}, bottom=${jeepBottom}) hit rock (top=${obsTop})`
+            `Collision detected! Jeep (y=${jeep.y}, bottom=${jeepBottom}) hit rock (top=${obsTop})`
           );
           setIsRunning(false);
           setIsGameOver(true);
@@ -152,7 +151,7 @@ const JeepDinoGame: React.FC = () => {
       ctx.drawImage(dinoImage, dino.x, dino.y, dino.width, dino.height);
 
       if (dino.x + dino.width > jeep.x) {
-        console.log("🦖💀 Dino caught Jeep! Game over.");
+        console.log("Dino caught Jeep! Game over.");
         setIsRunning(false);
         setIsGameOver(true);
       }
@@ -171,7 +170,7 @@ const JeepDinoGame: React.FC = () => {
   }, [isRunning, speed]);
 
   const restartGame = () => {
-    console.log("🔄 Restarting game...");
+    console.log("Restarting game...");
     window.location.reload();
   };
 
@@ -183,7 +182,7 @@ const JeepDinoGame: React.FC = () => {
         style={{ border: "2px solid black", display: "block", margin: "auto" }}
       />
 
-      {!isLoaded && <p>⏳ Loading game...</p>}
+      {!isLoaded && <p>Loading game...</p>}
 
       {isGameOver && (
         <div>
