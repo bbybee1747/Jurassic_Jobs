@@ -8,7 +8,6 @@ interface JwtPayload {
   email: string;
 }
 
-// Extend Express's Request type to include user property
 declare module 'express' {
   export interface Request {
     user?: JwtPayload;
@@ -16,7 +15,6 @@ declare module 'express' {
 }
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): Response | void => {
-  // Extract token from Authorization header
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 
