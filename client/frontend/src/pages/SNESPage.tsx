@@ -7,9 +7,9 @@ const JeepDinoGame: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isRunning, setIsRunning] = useState(true);
-  const [speed, setSpeed] = useState(5); // **Speed to escape obstacles**
-  const [score, setScore] = useState(0); // **Score state**
-  const animationFrameRef = useRef<number | null>(null); // **Ref to store animation frame ID**
+  const [speed, setSpeed] = useState(5);
+  const [score, setScore] = useState(0);
+  const animationFrameRef = useRef<number | null>(null);
 
   useEffect(() => {
     console.log("🎮 useEffect triggered");
@@ -32,15 +32,17 @@ const JeepDinoGame: React.FC = () => {
     canvas.height = 400;
 
     let jeep = { x: 100, y: 300, width: 100, height: 60, dy: 0, jumping: false };
-    let obstacles: { x: number; y: number; width: number; height: number; cleared: boolean }[] =
-      []; // **Added `cleared` flag**
+    let obstacles: { x: number; y: number; width: number; height: number; cleared: boolean; isGoldenEgg: boolean }[] = [];
+    let pterodactyl = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false };
     let gravity = 0.6;
     let frame = 0;
 
     const jeepImage = new Image();
-    const obstacleImage = new Image();
+    const goldeneggImage = new Image();
+    const pterodactylImage = new Image();
+    const rockImage = new Image();
     let imagesLoaded = 0;
-    const totalImages = 2;
+    const totalImages = 4;
 
     const checkImagesLoaded = () => {
       imagesLoaded++;
@@ -48,37 +50,49 @@ const JeepDinoGame: React.FC = () => {
       if (imagesLoaded === totalImages) {
         console.log("✅ All images loaded, starting game...");
         setIsLoaded(true);
-        animationFrameRef.current = requestAnimationFrame(update); // **Start game loop**
+        animationFrameRef.current = requestAnimationFrame(update);
       }
     };
 
     jeepImage.onload = checkImagesLoaded;
-    obstacleImage.onload = checkImagesLoaded;
+    goldeneggImage.onload = checkImagesLoaded;
+    pterodactylImage.onload = checkImagesLoaded;
+    rockImage.onload = checkImagesLoaded;
 
     jeepImage.onerror = () => console.error("❌ Failed to load jeep image.");
-    obstacleImage.onerror = () =>
-      console.error("❌ Failed to load rock image.");
+    goldeneggImage.onerror = () => console.error("❌ Failed to load golden egg image.");
+    pterodactylImage.onerror = () => console.error("❌ Failed to load pterodactyl image.");
+    rockImage.onerror = () => console.error("❌ Failed to load rock image.");
 
     jeepImage.src = "/jeep.png";
-    obstacleImage.src = "/rock.png";
+    goldeneggImage.src = "/goldenegg.png";
+    pterodactylImage.src = "/pterodactyl.png";
+    rockImage.src = "/rock.png";
 
     const jump = (event: KeyboardEvent) => {
       if (event.code === "Space" && !jeep.jumping && isRunning) {
-        event.preventDefault(); // **Prevent default Spacebar behavior**
+        event.preventDefault();
         console.log("⬆️ Jeep jumping!");
         jeep.dy = -12;
         jeep.jumping = true;
       }
       if (event.code === "ArrowRight" && isRunning) {
         console.log("🏎️ Jeep speeding up!");
-        setSpeed(8); // **Speed boost**
+        setSpeed(8);
       }
     };
 
     const slowDown = (event: KeyboardEvent) => {
       if (event.code === "ArrowRight" && isRunning) {
         console.log("🐢 Jeep slowing down.");
-        setSpeed(5); // **Reset speed after releasing Right Arrow**
+        setSpeed(5);
+      }
+    };
+
+    const spawnPterodactyl = () => {
+      if (!pterodactyl.active) {
+        pterodactyl.x = canvas.width; // Start from the right side
+        pterodactyl.active = true;
       }
     };
 
@@ -98,11 +112,19 @@ const JeepDinoGame: React.FC = () => {
         return;
       }
 
+      // Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // **Draw grass background**
-      ctx.fillStyle = "#4CAF50"; // **Green color for grass**
-      ctx.fillRect(0, 300, canvas.width, 100); // **Grass covers the bottom of the canvas**
+      // Draw the sky (blue and yellow gradient)
+      const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
+      skyGradient.addColorStop(0, "#87CEEB"); // Light blue
+      skyGradient.addColorStop(1, "#FFD700"); // Yellow
+      ctx.fillStyle = skyGradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+
+      // Draw the grass (green)
+      ctx.fillStyle = "#4CAF50"; // Green
+      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
 
       frame++;
 
@@ -117,19 +139,33 @@ const JeepDinoGame: React.FC = () => {
       // Draw Jeep
       ctx.drawImage(jeepImage, jeep.x, jeep.y, jeep.width, jeep.height);
 
-      // Add new obstacles
+      // Add new obstacles (golden eggs or rocks)
       if (frame % 100 === 0) {
-        obstacles.push({ x: canvas.width, y: 320, width: 40, height: 40, cleared: false }); // **Added `cleared` flag**
-        console.log("🚧 New obstacle added");
+        const isGoldenEgg = Math.random() < 0.5; // 50% chance of spawning a golden egg
+        obstacles.push({
+          x: canvas.width,
+          y: 320,
+          width: 40,
+          height: 40,
+          cleared: false,
+          isGoldenEgg,
+        });
+        console.log(`🚧 New ${isGoldenEgg ? "golden egg" : "rock"} added`);
       }
 
       // Update and draw obstacles
       obstacles.forEach((obs, index) => {
-        obs.x -= speed; // **Now affected by speed**
+        obs.x -= speed;
         if (obs.x + obs.width < 0) {
           obstacles.splice(index, 1);
         }
-        ctx.drawImage(obstacleImage, obs.x, obs.y, obs.width, obs.height);
+
+        // Draw obstacle (golden egg or rock)
+        if (obs.isGoldenEgg) {
+          ctx.drawImage(goldeneggImage, obs.x, obs.y, obs.width, obs.height);
+        } else {
+          ctx.drawImage(rockImage, obs.x, obs.y, obs.width, obs.height);
+        }
 
         // Collision detection between Jeep and obstacles
         let jeepBottom = jeep.y + jeep.height;
@@ -145,26 +181,63 @@ const JeepDinoGame: React.FC = () => {
           jeepBottom >= obsTop + 5 &&
           jeep.y + jeep.height - obs.y < 20
         ) {
-          console.log(
-            `💀 Collision detected! Jeep (y=${jeep.y}, bottom=${jeepBottom}) hit rock (top=${obsTop})`
-          );
+          console.log(`💀 Collision detected! Jeep hit ${obs.isGoldenEgg ? "golden egg" : "rock"}`);
           setIsRunning(false);
           setIsGameOver(true);
 
-          // Stop the game loop
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
           }
-          return; // **Stop further execution**
+          return;
         }
 
-        // **Check if Jeep successfully jumps over the obstacle**
+        // Check if Jeep successfully jumps over the obstacle
         if (!obs.cleared && obsRight < jeepLeft) {
-          console.log("🎉 Jeep cleared an obstacle!");
-          setScore((prevScore) => prevScore + 1); // Increment score
+          console.log(`🎉 Jeep cleared a ${obs.isGoldenEgg ? "golden egg" : "rock"}!`);
+          setScore((prevScore) => prevScore + (obs.isGoldenEgg ? 5 : 1)); // Reward 5 points for golden egg, 1 point for rock
           obs.cleared = true; // Mark the obstacle as cleared
         }
       });
+
+      // Update and draw pterodactyl
+      if (pterodactyl.active) {
+        pterodactyl.x -= pterodactyl.speed; // Move pterodactyl to the left
+        ctx.drawImage(pterodactylImage, pterodactyl.x, pterodactyl.y, pterodactyl.width, pterodactyl.height);
+
+        // Collision detection between Jeep and pterodactyl
+        let jeepBottom = jeep.y + jeep.height;
+        let jeepRight = jeep.x + jeep.width;
+        let jeepLeft = jeep.x;
+        let pterodactylBottom = pterodactyl.y + pterodactyl.height;
+        let pterodactylRight = pterodactyl.x + pterodactyl.width;
+        let pterodactylLeft = pterodactyl.x;
+
+        if (
+          jeepRight > pterodactylLeft &&
+          jeepLeft < pterodactylRight &&
+          jeepBottom >= pterodactyl.y &&
+          jeep.y <= pterodactylBottom
+        ) {
+          console.log("💀 Collision detected! Jeep hit pterodactyl!");
+          setIsRunning(false);
+          setIsGameOver(true);
+
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+          }
+          return;
+        }
+
+        // Reset pterodactyl when it goes off-screen
+        if (pterodactyl.x + pterodactyl.width < 0) {
+          pterodactyl.active = false;
+        }
+      }
+
+      // Spawn pterodactyl every 5 seconds (300 frames at 60 FPS)
+      if (frame % 300 === 0) {
+        spawnPterodactyl();
+      }
 
       // Continue the game loop
       animationFrameRef.current = requestAnimationFrame(update);
@@ -179,7 +252,6 @@ const JeepDinoGame: React.FC = () => {
       window.removeEventListener("keydown", jump);
       window.removeEventListener("keyup", slowDown);
 
-      // Cancel the animation frame when the component unmounts
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -193,26 +265,13 @@ const JeepDinoGame: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center", position: "relative", height: "100vh" }}>
-      {/* Game Title */}
-      <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>
-        RockRunner
-      </h2>
-  
-      {/* Score */}
-      <h2 style={{ margin: "10px", fontSize: "20px", color: "black" }}>
-        Score: {score}
-      </h2>
-  
-      {/* Canvas */}
+      <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>RockRunner</h2>
+      <h2 style={{ margin: "10px", fontSize: "20px", color: "black" }}>Score: {score}</h2>
       <canvas
         ref={canvasRef}
         style={{ border: "2px solid black", display: "block", margin: "auto" }}
       />
-  
-      {/* Loading Message */}
       {!isLoaded && <p>⏳ Loading game...</p>}
-  
-      {/* Game Over Message */}
       {isGameOver && (
         <div
           style={{
@@ -223,19 +282,17 @@ const JeepDinoGame: React.FC = () => {
             textAlign: "center",
           }}
         >
-          <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>
-            Game Over! You hit an obstacle!
-          </h2>
+          <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>Game Over! You hit an obstacle!</h2>
           <button
             onClick={restartGame}
             style={{
               padding: "10px 20px",
               fontSize: "16px",
               cursor: "pointer",
-              backgroundColor: "#4CAF50", // **Bright green background**
-              color: "white", // **White text**
-              border: "none", // **Remove default border**
-              borderRadius: "5px", // **Rounded corners**
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "5px",
             }}
           >
             Restart
