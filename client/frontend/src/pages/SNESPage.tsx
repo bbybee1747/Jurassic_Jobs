@@ -265,7 +265,7 @@ const JeepDinoGame: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center", position: "relative", height: "100vh" }}>
-      <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>RockRunner</h2>
+      <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>Extinction Drift</h2>
       <h2 style={{ margin: "10px", fontSize: "20px", color: "black" }}>Score: {score}</h2>
       <canvas
         ref={canvasRef}
