@@ -20,14 +20,12 @@ function App() {
 
   return (
     <Router>
-      {/* Bold, vibrant gradient background */}
       <div className="bg-gradient-to-br from-bgStart via-bgMiddle to-bgEnd text-primary font-sans min-h-screen flex flex-col">
         <Header
           isAuthenticated={isAuthenticated}
           setIsAuthenticated={setIsAuthenticated}
         />
-        {/* Main content card with shadow, rounded corners, and a vibrant border */}
-        <main className="flex-grow max-w-4xl mx-auto bg-cardBg border border-cardBorder shadow-2xl p-10 rounded-2xl my-8">
+        <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

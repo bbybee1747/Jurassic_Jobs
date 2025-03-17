@@ -12,34 +12,31 @@ function Header({ isAuthenticated, setIsAuthenticated }: HeaderProps) {
   };
 
   return (
-    <header className="bg-white text-gray-900 flex justify-between items-center px-6 py-4 border-b border-gray-200 shadow-sm">
-      <h1 className="text-xl font-bold tracking-tight">Jurassic Jobs</h1>
-      <nav className="flex space-x-6">
-        <Link
-          to="/"
-          className="text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          Home
-        </Link>
-        <Link
-          to="/dinosaurs"
-          className="text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          Dinosaurs
-        </Link>
-        <Link
-          to="/purchases"
-          className="text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          Purchases
-        </Link>
-        {!isAuthenticated ? (
-          <>
+    <header className="bg-white text-gray-900 shadow-md border-b border-gray-200">
+      <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <h1 className="text-2xl font-extrabold tracking-tight">
+          Jurassic Jobs
+        </h1>
+        <nav className="flex items-center flex-grow ml-8">
+          {/* Left side: navigation links */}
+          <div className="flex space-x-6">
             <Link
-              to="/login"
+              to="/"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
-              Login
+              Home
+            </Link>
+            <Link
+              to="/dinosaurs"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Dinosaurs
+            </Link>
+            <Link
+              to="/purchases"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Purchases
             </Link>
             <Link
               to="/snes"
@@ -53,16 +50,26 @@ function Header({ isAuthenticated, setIsAuthenticated }: HeaderProps) {
             >
               Search
             </Link>
-          </>
-        ) : (
-          <button
-            onClick={handleLogout}
-            className="text-red-500 border border-red-500 px-4 py-1 rounded hover:bg-red-500 hover:text-white transition-colors"
-          >
-            Logout
-          </button>
-        )}
-      </nav>
+          </div>
+          <div className="ml-auto">
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="text-red-500 border border-red-500 px-4 py-1 rounded hover:bg-red-500 hover:text-white transition-colors"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                Login
+              </Link>
+            )}
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }

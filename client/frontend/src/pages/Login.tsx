@@ -73,9 +73,31 @@ function Login({ setIsAuthenticated }: LoginProps) {
   const [registerMutation] = useMutation(REGISTER_MUTATION);
 
   const handleNetWorthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value, 10);
-    setNetWorth(value);
-    setFundsError(value < 5000000 ? "Lack of funds = No Dinosaurs" : "");
+    const value = e.target.value;
+    const parsedValue = parseFloat(value);
+    if (isNaN(parsedValue)) {
+      setNetWorth("");
+      setFundsError("Lack of funds = No Dinosaurs");
+    } else {
+      setNetWorth(parsedValue);
+      setFundsError(
+        parsedValue < 5000000 ? "Lack of funds = No Dinosaurs" : ""
+      );
+    }
+  };
+
+  const toggleMode = () => {
+    // Reset errors and form fields when toggling modes
+    setError("");
+    setFundsError("");
+    setEmail("");
+    setPassword("");
+    setFullName("");
+    setPhoneNumber("");
+    setAddress("");
+    setEmployer("");
+    setNetWorth("");
+    setIsRegistering(!isRegistering);
   };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -119,6 +141,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
         }
       }
     } catch (err: any) {
+      console.error(err);
       setError("Invalid credentials or registration error");
     }
   };
@@ -133,6 +156,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
           {isRegistering && (
             <>
               <input
+                id="fullName"
+                name="fullName"
                 type="text"
                 placeholder="Full Name"
                 className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -141,6 +166,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 onChange={(e) => setFullName(e.target.value)}
               />
               <input
+                id="phoneNumber"
+                name="phoneNumber"
                 type="tel"
                 placeholder="Phone Number"
                 className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -149,6 +176,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 onChange={(e) => setPhoneNumber(e.target.value)}
               />
               <input
+                id="address"
+                name="address"
                 type="text"
                 placeholder="Address"
                 className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -157,6 +186,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 onChange={(e) => setAddress(e.target.value)}
               />
               <input
+                id="employer"
+                name="employer"
                 type="text"
                 placeholder="Employer"
                 className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -165,6 +196,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 onChange={(e) => setEmployer(e.target.value)}
               />
               <input
+                id="netWorth"
+                name="netWorth"
                 type="number"
                 placeholder="Net Worth"
                 className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -180,6 +213,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
             </>
           )}
           <input
+            id="email"
+            name="email"
             type="email"
             placeholder="Email"
             className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -188,6 +223,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
+            id="password"
+            name="password"
             type="password"
             placeholder="Password"
             className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -206,7 +243,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
           </button>
         </form>
         <button
-          onClick={() => setIsRegistering(!isRegistering)}
+          onClick={toggleMode}
           className="mt-4 w-full text-blue-600 font-bold hover:text-blue-800 transition-all"
         >
           {isRegistering

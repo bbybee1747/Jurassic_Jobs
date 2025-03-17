@@ -7,13 +7,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: "#ffffff", // Main text color on dark backgrounds
-        accent: "#ff6363",  // A bold accent for buttons or highlights
-        bgStart: "#4f46e5", // Indigo-600
-        bgMiddle: "#9333ea", // Purple-600
-        bgEnd: "#ec4899",    // Pink-500
-        cardBg: "#ffffff",   // Card background, keeping it light for contrast
-        cardBorder: "#d4d4d8", // Light gray border
+        primary: "#ffffff", 
+        accent: "#ff6363",  
+        bgStart: "#1f2937", 
+        bgMiddle: "#111827", 
+        bgEnd: "#000000",    
+        cardBg: "#2c2c2c",   
+        cardBorder: "#444444", 
+        100: '#E5F6FF',
+        200: '#B8E1FF',
+        300: '#8BCBFF',
+        400: '#5FB6FF',
+        500: '#339FFF', 
+        600: '#007AFF',
+        700: '#0066CC',
+        800: '#005299',
+        900: '#003D66',
       },
       fontFamily: {
         sans: ['Poppins', 'sans-serif'],
