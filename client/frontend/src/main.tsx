@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ApolloProvider } from "@apollo/client";
 import client from "./apollo";
-// import "../dist/tailwind.css";
+import "./tailwind.css";
 import App from "./App";
 
 createRoot(document.getElementById("root")!).render(
