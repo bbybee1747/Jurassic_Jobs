@@ -42,7 +42,7 @@ function Header({ isAuthenticated, setIsAuthenticated }: HeaderProps) {
               to="/snes"
               className="text-gray-600 hover:text-gray-900 transition-colors"
             >
-              SNES
+              Game Mode
             </Link>
             <Link
               to="/search"

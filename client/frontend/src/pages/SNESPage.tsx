@@ -325,11 +325,11 @@ const JeepDinoGame: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center", position: "relative", height: "100vh" }}>
-      <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>Extinction Drift</h2>
-      <h2 style={{ margin: "10px", fontSize: "20px", color: "black" }}>Score: {score}</h2>
+      <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Extinction Drift</h2>
+      <h2 style={{ margin: "10px", fontSize: "20px", color: "white" }}>Score: {score}</h2>
       <canvas
         ref={canvasRef}
-        style={{ border: "2px solid black", display: "block", margin: "auto" }}
+        style={{ border: "2px groove white", display: "block", margin: "auto" }}
       />
       {!isLoaded && <p>⏳ Loading game...</p>}
       {isGameOver && (
@@ -342,7 +342,7 @@ const JeepDinoGame: React.FC = () => {
             textAlign: "center",
           }}
         >
-          <h2 style={{ margin: "10px", fontSize: "24px", color: "black" }}>Game Over! You hit an obstacle!</h2>
+          <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Game Over! You hit an obstacle!</h2>
           <button
             onClick={restartGame}
             style={{
@@ -350,7 +350,7 @@ const JeepDinoGame: React.FC = () => {
               fontSize: "16px",
               cursor: "pointer",
               backgroundColor: "#4CAF50",
-              color: "white",
+              color: "black",
               border: "none",
               borderRadius: "5px",
             }}
