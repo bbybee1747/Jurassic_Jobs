@@ -8,6 +8,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import schema from "./src/schemas";
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import db from "./src/config/db"; 
+import path from 'path';
 
 dotenv.config();
 
@@ -40,6 +41,15 @@ const startServer = async () => {
   const graphqlMiddleware = expressMiddleware(server, { context }) as unknown as RequestHandler;
 
   app.use("/graphql", express.json(), graphqlMiddleware);
+
+  if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/frontend/dist')));
+
+    app.get('*', (_req, res) => {
+      res.sendFile(path.join(__dirname, '../client/frontend/dist/index.html'));
+    });
+  }
+
 
   const PORT = process.env.PORT || 5173;
   app.listen(PORT, () => {
