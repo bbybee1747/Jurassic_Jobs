@@ -34,6 +34,7 @@ const JeepDinoGame: React.FC = () => {
     let jeep = { x: 100, y: 300, width: 100, height: 60, dy: 0, jumping: false };
     let obstacles: { x: number; y: number; width: number; height: number; cleared: boolean; isGoldenEgg: boolean }[] = [];
     let pterodactyl = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false };
+    let charles = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false }; // Charles object
     let gravity = 0.6;
     let frame = 0;
 
@@ -41,8 +42,9 @@ const JeepDinoGame: React.FC = () => {
     const goldeneggImage = new Image();
     const pterodactylImage = new Image();
     const rockImage = new Image();
+    const charlesImage = new Image();
     let imagesLoaded = 0;
-    const totalImages = 4;
+    const totalImages = 5; // Updated: Added Charles image
 
     const checkImagesLoaded = () => {
       imagesLoaded++;
@@ -58,16 +60,19 @@ const JeepDinoGame: React.FC = () => {
     goldeneggImage.onload = checkImagesLoaded;
     pterodactylImage.onload = checkImagesLoaded;
     rockImage.onload = checkImagesLoaded;
+    charlesImage.onload = checkImagesLoaded;
 
     jeepImage.onerror = () => console.error("❌ Failed to load jeep image.");
     goldeneggImage.onerror = () => console.error("❌ Failed to load golden egg image.");
     pterodactylImage.onerror = () => console.error("❌ Failed to load pterodactyl image.");
     rockImage.onerror = () => console.error("❌ Failed to load rock image.");
+    charlesImage.onerror = () => console.error("❌ Failed to load Charles image.");
 
     jeepImage.src = "/jeep.png";
     goldeneggImage.src = "/goldenegg.png";
     pterodactylImage.src = "/pterodactyl.png";
     rockImage.src = "/rock.png";
+    charlesImage.src = "/charles.png";
 
     const jump = (event: KeyboardEvent) => {
       if (event.code === "Space" && !jeep.jumping && isRunning) {
@@ -93,6 +98,16 @@ const JeepDinoGame: React.FC = () => {
       if (!pterodactyl.active) {
         pterodactyl.x = canvas.width; // Start from the right side
         pterodactyl.active = true;
+        console.log("🦖 Pterodactyl spawned!");
+      }
+    };
+
+    const spawnCharles = () => {
+      if (!charles.active) {
+        charles.x = canvas.width; // Start from the right side
+        charles.active = true;
+        pterodactyl.active = false; // Ensure pterodactyl disappears when Charles appears
+        console.log("👨‍💻 Charles spawned!");
       }
     };
 
@@ -124,7 +139,7 @@ const JeepDinoGame: React.FC = () => {
 
       // Draw the grass (green)
       ctx.fillStyle = "#4CAF50"; // Green
-      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2); // Fixed grass height
 
       frame++;
 
@@ -234,9 +249,54 @@ const JeepDinoGame: React.FC = () => {
         }
       }
 
+      // Update and draw Charles
+      if (charles.active) {
+        charles.x -= charles.speed; // Move Charles to the left
+        ctx.drawImage(charlesImage, charles.x, charles.y, charles.width, charles.height);
+
+        // Draw "Happy Coding" text below Charles
+        ctx.fillStyle = "black";
+        ctx.font = "16px Arial";
+        ctx.fillText("Happy Coding", charles.x, charles.y + charles.height + 20);
+
+        // Collision detection between Jeep and Charles
+        let jeepBottom = jeep.y + jeep.height;
+        let jeepRight = jeep.x + jeep.width;
+        let jeepLeft = jeep.x;
+        let charlesBottom = charles.y + charles.height;
+        let charlesRight = charles.x + charles.width;
+        let charlesLeft = charles.x;
+
+        if (
+          jeepRight > charlesLeft &&
+          jeepLeft < charlesRight &&
+          jeepBottom >= charles.y &&
+          jeep.y <= charlesBottom
+        ) {
+          console.log("💀 Collision detected! Jeep hit Charles!");
+          setIsRunning(false);
+          setIsGameOver(true);
+
+          if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+          }
+          return;
+        }
+
+        // Reset Charles when it goes off-screen
+        if (charles.x + charles.width < 0) {
+          charles.active = false;
+        }
+      }
+
       // Spawn pterodactyl every 5 seconds (300 frames at 60 FPS)
-      if (frame % 300 === 0) {
+      if (frame % 300 === 0 && !charles.active) {
         spawnPterodactyl();
+      }
+
+      // Spawn Charles every 10 seconds (600 frames at 60 FPS)
+      if (frame % 600 === 0) {
+        spawnCharles();
       }
 
       // Continue the game loop
