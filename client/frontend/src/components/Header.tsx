@@ -18,7 +18,6 @@ function Header({ isAuthenticated, setIsAuthenticated }: HeaderProps) {
           Jurassic Jobs
         </h1>
         <nav className="flex items-center flex-grow ml-8">
-          {/* Left side: navigation links */}
           <div className="flex space-x-6">
             <Link
               to="/"
