@@ -8,10 +8,10 @@ export const resolvers = {
     registerUser: async (_: any, { input }: { input: any }) => {
       const { fullName, phoneNumber, address, employer, netWorth, email, password } = input;
      
-      const newUser: IUser = new User({ fullName, phoneNumber, address, employer, netWorth, email, password });
+      const newUser: IUser = new User({ fullName, phoneNumber, address, employer, netWorth, email, password, isAdmin: false });
       await newUser.save();
      
-      const token = jwt.sign({ id: newUser._id, email: newUser.email }, JWT_SECRET, { expiresIn: '1d' });
+      const token = jwt.sign({ id: newUser._id, email: newUser.email, isAdmin: newUser.isAdmin}, JWT_SECRET, { expiresIn: '1d' });
       
       return { token, user: newUser };
     },
