@@ -12,18 +12,18 @@ function Purchases() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 text-gray-900 p-10 font-sans">
-      <div className="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8 border border-gray-300">
-        <h1 className="text-4xl font-bold text-gray-800 mb-6 text-center">
+    <div className="flex flex-col items-center justify-start font-sans text-center min-h-screen bg-gray-900 p-10">
+      <div className="w-full max-w-4xl bg-gray-800 shadow-2xl rounded-2xl p-10 border border-gray-700 mt-8">
+        <h1 className="text-4xl font-bold text-white mb-6">
           🦖 Purchase History
         </h1>
 
         {loading ? (
-          <div className="text-center text-2xl font-semibold text-gray-600">
+          <div className="text-center text-2xl font-semibold text-gray-300">
             Loading...
           </div>
         ) : (
-          <div className="text-lg text-gray-600 text-center">
+          <div className="text-lg text-gray-300 text-center">
             <p>Nothing to display at this time.</p>
           </div>
         )}

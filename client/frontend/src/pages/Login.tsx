@@ -147,9 +147,9 @@ function Login({ setIsAuthenticated }: LoginProps) {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 p-6">
-      <div className="bg-white p-8 border border-gray-300 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-gray-800 text-center mb-6">
+    <div className="flex flex-col items-center justify-start font-sans text-center min-h-screen bg-gray-900 p-6">
+      <div className="bg-gray-800 p-10 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-md">
+        <h1 className="text-3xl font-bold text-white mb-6">
           {isRegistering ? "Register" : "Login"}
         </h1>
         <form className="space-y-4" onSubmit={handleLogin}>
@@ -160,7 +160,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 name="fullName"
                 type="text"
                 placeholder="Full Name"
-                className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
                 required
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
@@ -170,7 +170,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 name="phoneNumber"
                 type="tel"
                 placeholder="Phone Number"
-                className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
                 required
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
@@ -180,7 +180,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 name="address"
                 type="text"
                 placeholder="Address"
-                className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
                 required
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
@@ -190,7 +190,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 name="employer"
                 type="text"
                 placeholder="Employer"
-                className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
                 required
                 value={employer}
                 onChange={(e) => setEmployer(e.target.value)}
@@ -200,7 +200,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
                 name="netWorth"
                 type="number"
                 placeholder="Net Worth"
-                className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
                 required
                 value={netWorth}
                 onChange={handleNetWorthChange}
@@ -217,7 +217,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
             name="email"
             type="email"
             placeholder="Email"
-            className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -227,7 +227,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
             name="password"
             type="password"
             placeholder="Password"
-            className="w-full p-3 border border-gray-400 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -244,7 +244,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
         </form>
         <button
           onClick={toggleMode}
-          className="mt-4 w-full text-blue-600 font-bold hover:text-blue-800 transition-all"
+          className="mt-4 w-full text-accent font-bold hover:underline transition-all"
         >
           {isRegistering
             ? "Already have an account? Login"

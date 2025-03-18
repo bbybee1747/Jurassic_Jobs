@@ -14,6 +14,7 @@ import Dinosaurs from "./pages/Dinosaurs";
 import Purchases from "./pages/Purchase";
 import SNESPage from "./pages/SNESPage";
 import DinosaurSearch from "./pages/DinosaurSearch";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,6 +45,7 @@ function App() {
                 isAuthenticated ? <Purchases /> : <Navigate to="/login" />
               }
             />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="/snes" element={<SNESPage />} />
             <Route path="/search" element={<DinosaurSearch />} />
           </Routes>

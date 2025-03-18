@@ -49,6 +49,12 @@ function Header({ isAuthenticated, setIsAuthenticated }: HeaderProps) {
             >
               Search
             </Link>
+            <Link
+              to="/admin"
+              className="text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              Admin
+            </Link>
           </div>
           <div className="ml-auto">
             {isAuthenticated ? (

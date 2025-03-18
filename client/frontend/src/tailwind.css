@@ -1093,6 +1093,11 @@ video {
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
 }
 
+.focus\:ring-accent:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(255 99 99 / var(--tw-ring-opacity, 1));
+}
+
 .focus\:ring-blue-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity, 1));

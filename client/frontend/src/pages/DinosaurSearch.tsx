@@ -8,7 +8,6 @@ const DinosaurSearch = () => {
 
   const handleSearch = async () => {
     if (!query) return;
-
     setLoading(true);
     try {
       const graphqlQuery = {
@@ -26,8 +25,7 @@ const DinosaurSearch = () => {
         { headers: { "Content-Type": "application/json" } }
       );
 
-      console.log("GraphQL Response:", response.data); // Log full response
-
+      console.log("GraphQL Response:", response.data);
       if (response.data.errors) {
         console.error("GraphQL Errors:", response.data.errors);
         setResults("Error fetching dinosaur information.");
@@ -42,35 +40,33 @@ const DinosaurSearch = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">
+    <div className="flex flex-col items-center justify-start font-sans text-center min-h-screen bg-gray-900 p-6">
+      <h1 className="text-3xl font-bold mb-6 text-white">
         Dinosaur Encyclopedia
       </h1>
 
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg bg-gray-800 p-10 border border-gray-700 rounded-2xl shadow-2xl">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for a dinosaur..."
-          className="border border-gray-400 p-3 w-full rounded-lg text-gray-900"
+          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-white placeholder-gray-400"
         />
         <button
           onClick={handleSearch}
-          className="bg-blue-600 hover:bg-blue-700 text-primary font-bold py-2 px-4 rounded-lg mt-4 w-full"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg mt-4 w-full shadow-md transition-all"
         >
           Search
         </button>
       </div>
 
-      {loading && <p className="mt-4 text-gray-600">Loading...</p>}
+      {loading && <p className="mt-4 text-gray-300">Loading...</p>}
 
       {results && (
-        <div className="mt-6 bg-white shadow-lg p-6 rounded-lg max-w-lg w-full">
-          <h2 className="text-xl font-semibold text-gray-700">
-            Search Results:
-          </h2>
-          <p className="text-gray-600 mt-2">{results}</p>
+        <div className="mt-6 w-full max-w-lg bg-gray-800 p-10 border border-gray-700 rounded-2xl shadow-2xl">
+          <h2 className="text-xl font-semibold text-white">Search Results:</h2>
+          <p className="text-gray-300 mt-2">{results}</p>
         </div>
       )}
     </div>
