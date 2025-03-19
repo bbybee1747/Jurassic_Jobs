@@ -13,7 +13,7 @@ export const dinosaurTypeDefs = gql`
 
   extend type Query {
     dinosaurs(sortBy: String): [Dinosaur!]!
-    searchDinosaur(query: String!): [Dinosaur!]!
+    searchDinosaur(query: String!): String!
   }
 
   input DinosaurInput {

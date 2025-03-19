@@ -180,7 +180,6 @@ const DELETE_DINOSAUR = gql`
 `;
 
 const AdminPage: React.FC = () => {
-  // Temporary admin check. Replace with your auth logic later.
   const isAdmin = localStorage.getItem("isAdmin") === "true";
   if (!isAdmin) {
     return <Navigate to="/" replace />;

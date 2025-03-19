@@ -62,7 +62,6 @@ export const dinosaurResolvers = {
   },
 
   Mutation: {
-    // 🟢 Add a new dinosaur (Admin only)
     addDinosaur: async (_: any, { input }: { input: any }, { user }: { user: any }) => {
       if (!user || !user.isAdmin) {
         throw new ForbiddenError("Access denied: Only admins can add dinosaurs.");
@@ -73,7 +72,6 @@ export const dinosaurResolvers = {
       return newDinosaur;
     },
 
-    // 🟡 Update an existing dinosaur (Admin only)
     updateDinosaur: async (_: any, { id, input }: { id: string; input: any }, { user }: { user: any }) => {
       if (!user || !user.isAdmin) {
         throw new ForbiddenError("Access denied: Only admins can update dinosaurs.");
@@ -83,8 +81,7 @@ export const dinosaurResolvers = {
       if (!updatedDinosaur) throw new Error("Dinosaur not found");
       return updatedDinosaur;
     },
-
-    // 🔴 Delete a dinosaur (Admin only)
+    
     deleteDinosaur: async (_: any, { id }: { id: string }, { user }: { user: any }) => {
       if (!user || !user.isAdmin) {
         throw new ForbiddenError("Access denied: Only admins can delete dinosaurs.");
