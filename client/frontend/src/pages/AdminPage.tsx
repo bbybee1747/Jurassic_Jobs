@@ -2,8 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Navigate } from "react-router-dom";
 
-// ----- User Operations -----
-// Updated to match resolvers.ts
+// ----- User Operations (matching resolvers.ts) -----
 const GET_USERS = gql`
   query GetUsers {
     allUsers {
@@ -97,8 +96,7 @@ const DELETE_USER = gql`
   }
 `;
 
-// ----- Dinosaur Operations -----
-// These match your dinosaurResolvers.ts definitions.
+// ----- Dinosaur Operations (using your dinosaurResolvers.ts as is) -----
 const GET_DINOSAURS = gql`
   query GetDinosaurs {
     dinosaurs {
@@ -198,12 +196,13 @@ const AdminPage: React.FC = () => {
   const [updateUser] = useMutation(UPDATE_USER);
   const [deleteUser] = useMutation(DELETE_USER);
 
+  // Store numeric fields as strings for proper controlled input behavior
   const [newUser, setNewUser] = useState({
     fullName: "",
     phoneNumber: "",
     address: "",
     employer: "",
-    netWorth: 0,
+    netWorth: "", // string
     email: "",
     password: "",
     isAdmin: false,
@@ -215,7 +214,7 @@ const AdminPage: React.FC = () => {
     phoneNumber: "",
     address: "",
     employer: "",
-    netWorth: 0,
+    netWorth: "", // string
     email: "",
     isAdmin: false,
   });
@@ -226,17 +225,17 @@ const AdminPage: React.FC = () => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
     setNewUser((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : name === "netWorth"
-          ? parseFloat(value)
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const handleAddUser = async (e: FormEvent) => {
     e.preventDefault();
+    const netWorth = parseFloat(newUser.netWorth);
+    if (newUser.netWorth === "" || isNaN(netWorth)) {
+      console.error("Net Worth must be a valid number.");
+      return;
+    }
     try {
       await addUser({
         variables: {
@@ -244,7 +243,7 @@ const AdminPage: React.FC = () => {
           phoneNumber: newUser.phoneNumber,
           address: newUser.address,
           employer: newUser.employer,
-          netWorth: newUser.netWorth,
+          netWorth: netWorth,
           email: newUser.email,
           password: newUser.password,
           isAdmin: newUser.isAdmin,
@@ -255,7 +254,7 @@ const AdminPage: React.FC = () => {
         phoneNumber: "",
         address: "",
         employer: "",
-        netWorth: 0,
+        netWorth: "",
         email: "",
         password: "",
         isAdmin: false,
@@ -269,20 +268,19 @@ const AdminPage: React.FC = () => {
   const handleEditUserChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
-    const checked = (e.target as HTMLInputElement).checked;
+    const { name, value, type, checked } = e.target as HTMLInputElement;
     setEditingUserData((prev) => ({
       ...prev,
-      [name]:
-        type === "checkbox"
-          ? checked
-          : name === "netWorth"
-          ? parseFloat(value)
-          : value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   const submitUserUpdate = async (id: string) => {
+    const netWorth = parseFloat(editingUserData.netWorth);
+    if (editingUserData.netWorth === "" || isNaN(netWorth)) {
+      console.error("Net Worth must be a valid number.");
+      return;
+    }
     try {
       await updateUser({
         variables: {
@@ -291,7 +289,7 @@ const AdminPage: React.FC = () => {
           phoneNumber: editingUserData.phoneNumber,
           address: editingUserData.address,
           employer: editingUserData.employer,
-          netWorth: editingUserData.netWorth,
+          netWorth: netWorth,
           email: editingUserData.email,
           isAdmin: editingUserData.isAdmin,
         },
@@ -314,21 +312,22 @@ const AdminPage: React.FC = () => {
   const [updateDinosaur] = useMutation(UPDATE_DINOSAUR);
   const [deleteDinosaur] = useMutation(DELETE_DINOSAUR);
 
+  // Store numeric fields as strings
   const [newDino, setNewDino] = useState({
-    age: 0,
+    age: "",
     species: "",
     size: "",
-    price: 0,
+    price: "",
     imageUrl: "",
     description: "",
   });
 
   const [editingDinoId, setEditingDinoId] = useState<string | null>(null);
   const [editingDinoData, setEditingDinoData] = useState({
-    age: 0,
+    age: "",
     species: "",
     size: "",
-    price: 0,
+    price: "",
     imageUrl: "",
     description: "",
   });
@@ -336,31 +335,42 @@ const AdminPage: React.FC = () => {
   const handleNewDinoChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setNewDino((prev) => ({
       ...prev,
-      [name]: type === "number" ? parseFloat(value) : value,
+      [name]: value,
     }));
   };
 
   const handleAddDinosaur = async (e: FormEvent) => {
     e.preventDefault();
+    const age = parseFloat(newDino.age);
+    const price = parseFloat(newDino.price);
+    if (
+      newDino.age === "" ||
+      isNaN(age) ||
+      newDino.price === "" ||
+      isNaN(price)
+    ) {
+      console.error("Age and Price must be valid numbers.");
+      return;
+    }
     try {
       await addDinosaur({
         variables: {
-          age: newDino.age,
+          age: age,
           species: newDino.species,
           size: newDino.size,
-          price: newDino.price,
+          price: price,
           imageUrl: newDino.imageUrl,
           description: newDino.description,
         },
       });
       setNewDino({
-        age: 0,
+        age: "",
         species: "",
         size: "",
-        price: 0,
+        price: "",
         imageUrl: "",
         description: "",
       });
@@ -373,22 +383,33 @@ const AdminPage: React.FC = () => {
   const handleEditDinoChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setEditingDinoData((prev) => ({
       ...prev,
-      [name]: type === "number" ? parseFloat(value) : value,
+      [name]: value,
     }));
   };
 
   const submitDinoUpdate = async (id: string) => {
+    const age = parseFloat(editingDinoData.age);
+    const price = parseFloat(editingDinoData.price);
+    if (
+      editingDinoData.age === "" ||
+      isNaN(age) ||
+      editingDinoData.price === "" ||
+      isNaN(price)
+    ) {
+      console.error("Age and Price must be valid numbers.");
+      return;
+    }
     try {
       await updateDinosaur({
         variables: {
           id,
-          age: editingDinoData.age,
+          age: age,
           species: editingDinoData.species,
           size: editingDinoData.size,
-          price: editingDinoData.price,
+          price: price,
           imageUrl: editingDinoData.imageUrl,
           description: editingDinoData.description,
         },
@@ -554,7 +575,7 @@ const AdminPage: React.FC = () => {
                                 phoneNumber: user.phoneNumber,
                                 address: user.address,
                                 employer: user.employer,
-                                netWorth: user.netWorth,
+                                netWorth: String(user.netWorth),
                                 email: user.email,
                                 isAdmin: user.isAdmin,
                               });
@@ -801,10 +822,10 @@ const AdminPage: React.FC = () => {
                             onClick={() => {
                               setEditingDinoId(dino.id);
                               setEditingDinoData({
-                                age: dino.age,
+                                age: String(dino.age),
                                 species: dino.species,
                                 size: dino.size,
-                                price: dino.price,
+                                price: String(dino.price),
                                 imageUrl: dino.imageUrl || "",
                                 description: dino.description || "",
                               });
