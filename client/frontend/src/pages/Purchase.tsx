@@ -5,7 +5,6 @@ function Purchases() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate fetching data from the backend
     setTimeout(() => {
       setLoading(false);
     }, 2000);

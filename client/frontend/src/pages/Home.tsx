@@ -28,7 +28,6 @@ function Home() {
           opportunities.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Dinosaur Card 1 */}
           <div className="bg-gray-700 p-6 border border-gray-600 rounded-lg shadow-md text-center">
             <img
               src={tRex}
@@ -42,7 +41,6 @@ function Home() {
               A formidable predator known for its impressive stature and power.
             </p>
           </div>
-          {/* Dinosaur Card 2 */}
           <div className="bg-gray-700 p-6 border border-gray-600 rounded-lg shadow-md text-center">
             <img
               src={Pterodactyle}
@@ -54,7 +52,6 @@ function Home() {
               A renowned flying reptile that once dominated the skies.
             </p>
           </div>
-          {/* Dinosaur Card 3 */}
           <div className="bg-gray-700 p-6 border border-gray-600 rounded-lg shadow-md text-center">
             <img
               src={tRex}

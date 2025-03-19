@@ -35,7 +35,6 @@ function Dinosaurs() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Placeholder for future dinosaur data */}
           <p className="text-lg text-gray-300 text-center col-span-full">
             Dinosaur data will be displayed here.
           </p>
