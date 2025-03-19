@@ -2,7 +2,7 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { gql, useQuery, useMutation, ServerError } from "@apollo/client";
 import { Navigate } from "react-router-dom";
 
-const GET_USERS = gql`
+const allUsers = gql`
   query GetAllUsers {
     allUsers {
       id
@@ -61,7 +61,7 @@ const AdminPage: React.FC = () => {
     loading: usersLoading,
     error: usersError,
     refetch: refetchUsers,
-  } = useQuery(GET_USERS, {
+  } = useQuery(allUsers, {
     onCompleted: (data) => console.log(data),
     onError: (err) => console.error(err),
   });
