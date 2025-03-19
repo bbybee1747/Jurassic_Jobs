@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
 
@@ -13,6 +13,7 @@ const LOGIN_MUTATION = gql`
       user {
         id
         email
+        isAdmin
       }
     }
   }
@@ -72,7 +73,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
   const [loginMutation] = useMutation(LOGIN_MUTATION);
   const [registerMutation] = useMutation(REGISTER_MUTATION);
 
-  const handleNetWorthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNetWorthChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     const parsedValue = parseFloat(value);
     if (isNaN(parsedValue)) {
@@ -100,7 +101,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
     setIsRegistering(!isRegistering);
   };
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
@@ -124,6 +125,8 @@ function Login({ setIsAuthenticated }: LoginProps) {
         if (data && data.registerUser && data.registerUser.token) {
           localStorage.setItem("token", data.registerUser.token);
           localStorage.setItem("isAuthenticated", "true");
+          // For registration, set isAdmin to "false" by default
+          localStorage.setItem("isAdmin", "false");
           setIsAuthenticated(true);
           const redirectTo = (location.state as any)?.from || "/";
           navigate(redirectTo);
@@ -135,6 +138,11 @@ function Login({ setIsAuthenticated }: LoginProps) {
         if (data && data.loginUser && data.loginUser.token) {
           localStorage.setItem("token", data.loginUser.token);
           localStorage.setItem("isAuthenticated", "true");
+          // Save isAdmin flag from login response (as a string)
+          localStorage.setItem(
+            "isAdmin",
+            data.loginUser.user.isAdmin ? "true" : "false"
+          );
           setIsAuthenticated(true);
           const redirectTo = (location.state as any)?.from || "/";
           navigate(redirectTo);
