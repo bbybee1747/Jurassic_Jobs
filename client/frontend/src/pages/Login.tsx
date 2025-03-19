@@ -88,7 +88,6 @@ function Login({ setIsAuthenticated }: LoginProps) {
   };
 
   const toggleMode = () => {
-    // Reset errors and form fields when toggling modes
     setError("");
     setFundsError("");
     setEmail("");
@@ -125,7 +124,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
         if (data && data.registerUser && data.registerUser.token) {
           localStorage.setItem("token", data.registerUser.token);
           localStorage.setItem("isAuthenticated", "true");
-          // For registration, set isAdmin to "false" by default
+          // For registration, set isAdmin to "false" by default.
           localStorage.setItem("isAdmin", "false");
           setIsAuthenticated(true);
           const redirectTo = (location.state as any)?.from || "/";
@@ -138,7 +137,7 @@ function Login({ setIsAuthenticated }: LoginProps) {
         if (data && data.loginUser && data.loginUser.token) {
           localStorage.setItem("token", data.loginUser.token);
           localStorage.setItem("isAuthenticated", "true");
-          // Save isAdmin flag from login response (as a string)
+          // Save the isAdmin flag from the login response as a string.
           localStorage.setItem(
             "isAdmin",
             data.loginUser.user.isAdmin ? "true" : "false"
