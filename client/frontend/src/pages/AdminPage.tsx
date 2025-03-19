@@ -2,9 +2,11 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Navigate } from "react-router-dom";
 
+// ----- User Operations -----
+// Updated to match resolvers.ts
 const GET_USERS = gql`
   query GetUsers {
-    users {
+    allUsers {
       id
       fullName
       phoneNumber
@@ -28,7 +30,7 @@ const ADD_USER = gql`
     $password: String!
     $isAdmin: Boolean!
   ) {
-    addUser(
+    createUser(
       input: {
         fullName: $fullName
         phoneNumber: $phoneNumber
@@ -90,11 +92,13 @@ const UPDATE_USER = gql`
 const DELETE_USER = gql`
   mutation DeleteUser($id: ID!) {
     deleteUser(id: $id) {
-      id
+      message
     }
   }
 `;
 
+// ----- Dinosaur Operations -----
+// These match your dinosaurResolvers.ts definitions.
 const GET_DINOSAURS = gql`
   query GetDinosaurs {
     dinosaurs {
@@ -173,9 +177,7 @@ const UPDATE_DINOSAUR = gql`
 
 const DELETE_DINOSAUR = gql`
   mutation DeleteDinosaur($id: ID!) {
-    deleteDinosaur(id: $id) {
-      id
-    }
+    deleteDinosaur(id: $id)
   }
 `;
 
@@ -185,6 +187,7 @@ const AdminPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  // ----- User Data -----
   const {
     data: usersData,
     loading: usersLoading,
@@ -300,6 +303,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  // ----- Dinosaur Data -----
   const {
     data: dinosaursData,
     loading: dinosaursLoading,
@@ -399,6 +403,8 @@ const AdminPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-900 p-10 font-sans text-white">
       <h1 className="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
+
+      {/* User Management Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Management</h2>
         {usersLoading ? (
@@ -432,7 +438,7 @@ const AdminPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {usersData?.users.map((user: any) => (
+                {usersData?.allUsers.map((user: any) => (
                   <tr key={user.id} className="hover:bg-gray-700">
                     <td className="px-2 py-2 border-b border-gray-700">
                       {user.id}
@@ -664,6 +670,7 @@ const AdminPage: React.FC = () => {
         </form>
       </section>
 
+      {/* Dinosaur Management Section */}
       <section>
         <h2 className="text-3xl font-bold mb-4">Dinosaur Management</h2>
         {dinosaursLoading ? (
