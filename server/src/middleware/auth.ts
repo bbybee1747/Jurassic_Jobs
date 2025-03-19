@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 interface JwtPayload {
   id: string;
   email: string;
+  isAdmin: boolean;
 }
 
 declare module 'express' {
