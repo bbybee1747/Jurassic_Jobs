@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery, useMutation, ServerError } from "@apollo/client";
 import { Navigate } from "react-router-dom";
 
 const GET_USERS = gql`
@@ -65,6 +65,15 @@ const AdminPage: React.FC = () => {
     onCompleted: (data) => console.log(data),
     onError: (err) => console.error(err),
   });
+
+  if (usersError) {
+    const networkError = usersError.networkError as ServerError;
+    console.error(
+      "Detailed error response",
+      networkError?.result || usersError.message
+    );
+    return <div>Error: {usersError.message}</div>;
+  }
 
   const [createUser] = useMutation(CREATE_USER);
 
