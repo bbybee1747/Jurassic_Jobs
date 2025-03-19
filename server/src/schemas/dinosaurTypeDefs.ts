@@ -13,6 +13,30 @@ export const dinosaurTypeDefs = gql`
 
   extend type Query {
     dinosaurs(sortBy: String): [Dinosaur!]!
-    searchDinosaur(query: String!): String!
+    searchDinosaur(query: String!): [Dinosaur!]!
+  }
+
+  input DinosaurInput {
+    age: Int!
+    species: String!
+    size: String!
+    price: Float!
+    imageUrl: String
+    description: String
+  }
+
+  input UpdateDinosaurInput {
+    age: Int
+    species: String
+    size: String
+    price: Float
+    imageUrl: String
+    description: String
+  }
+
+  extend type Mutation {
+    addDinosaur(input: DinosaurInput!): Dinosaur!
+    updateDinosaur(id: ID!, input: UpdateDinosaurInput!): Dinosaur!
+    deleteDinosaur(id: ID!): String!
   }
 `;
