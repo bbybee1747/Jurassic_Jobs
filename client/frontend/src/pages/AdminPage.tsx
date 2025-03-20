@@ -2,7 +2,6 @@ import React, { useState, ChangeEvent, FormEvent } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Navigate } from "react-router-dom";
 
-// ----- User Operations (matching resolvers.ts) -----
 const GET_USERS = gql`
   query GetUsers {
     allUsers {
@@ -96,7 +95,6 @@ const DELETE_USER = gql`
   }
 `;
 
-// ----- Dinosaur Operations (using your dinosaurResolvers.ts as is) -----
 const GET_DINOSAURS = gql`
   query GetDinosaurs {
     dinosaurs {
@@ -185,7 +183,6 @@ const AdminPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  // ----- User Data -----
   const {
     data: usersData,
     loading: usersLoading,
@@ -196,13 +193,12 @@ const AdminPage: React.FC = () => {
   const [updateUser] = useMutation(UPDATE_USER);
   const [deleteUser] = useMutation(DELETE_USER);
 
-  // Store numeric fields as strings for proper controlled input behavior
   const [newUser, setNewUser] = useState({
     fullName: "",
     phoneNumber: "",
     address: "",
     employer: "",
-    netWorth: "", // string
+    netWorth: "",
     email: "",
     password: "",
     isAdmin: false,
@@ -214,7 +210,7 @@ const AdminPage: React.FC = () => {
     phoneNumber: "",
     address: "",
     employer: "",
-    netWorth: "", // string
+    netWorth: "",
     email: "",
     isAdmin: false,
   });
@@ -301,7 +297,6 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // ----- Dinosaur Data -----
   const {
     data: dinosaursData,
     loading: dinosaursLoading,
@@ -312,7 +307,6 @@ const AdminPage: React.FC = () => {
   const [updateDinosaur] = useMutation(UPDATE_DINOSAUR);
   const [deleteDinosaur] = useMutation(DELETE_DINOSAUR);
 
-  // Store numeric fields as strings
   const [newDino, setNewDino] = useState({
     age: "",
     species: "",
@@ -425,7 +419,6 @@ const AdminPage: React.FC = () => {
     <div className="min-h-screen bg-gray-900 p-10 font-sans text-white">
       <h1 className="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
 
-      {/* User Management Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Management</h2>
         {usersLoading ? (
@@ -577,7 +570,7 @@ const AdminPage: React.FC = () => {
                                 employer: user.employer,
                                 netWorth: String(user.netWorth),
                                 email: user.email,
-                                isAdmin: user.isAdmin === "true", // convert string to boolean
+                                isAdmin: user.isAdmin === "true",
                               });
                             }}
                             className="px-2 py-1 bg-blue-600 rounded hover:bg-blue-700"
@@ -691,7 +684,6 @@ const AdminPage: React.FC = () => {
         </form>
       </section>
 
-      {/* Dinosaur Management Section */}
       <section>
         <h2 className="text-3xl font-bold mb-4">Dinosaur Management</h2>
         {dinosaursLoading ? (

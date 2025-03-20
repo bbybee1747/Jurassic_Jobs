@@ -4,7 +4,6 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY || 'your_jwt_secret';
 
-// Helper function: returns true only if user.isAdmin is exactly "true"
 function isAdminUser(user: any): boolean {
   return !!user && user.isAdmin === "true";
 }
@@ -13,7 +12,6 @@ export const resolvers = {
   Mutation: {
     registerUser: async (_: any, { input }: { input: any }) => {
       const { fullName, phoneNumber, address, employer, netWorth, email, password } = input;
-      // Create new user with isAdmin explicitly set to "false"
       const newUser: IUser = new User({
         fullName,
         phoneNumber,
@@ -56,7 +54,6 @@ export const resolvers = {
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
-      // Remove any isAdmin field from input and force it to "false"
       const { isAdmin, ...rest } = input;
       const newUser: IUser = new User({
         ...input,
@@ -108,7 +105,6 @@ export const resolvers = {
     }
   },
 
-  // Field resolver: return the isAdmin field as stored (a string)
   User: {
     isAdmin: (parent: any) => {
       return parent.isAdmin;
