@@ -58,7 +58,10 @@ export const resolvers = {
       }
       // Remove any isAdmin field from input and force it to "false"
       const { isAdmin, ...rest } = input;
-      const newUser: IUser = new User({ ...rest, isAdmin: "false" });
+      const newUser: IUser = new User({
+        ...input,
+        isAdmin: input.isAdmin === "true" ? "true" : "false",
+      });
       await newUser.save();
       return newUser;
     },
