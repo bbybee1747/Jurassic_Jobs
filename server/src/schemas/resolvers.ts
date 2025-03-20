@@ -4,7 +4,7 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Helper function to check if the user is an admin based on a string value.
+// Helper function: returns true only if user.isAdmin is exactly "true"
 function isAdminUser(user: any): boolean {
   return !!user && user.isAdmin === "true";
 }
@@ -13,7 +13,7 @@ export const resolvers = {
   Mutation: {
     registerUser: async (_: any, { input }: { input: any }) => {
       const { fullName, phoneNumber, address, employer, netWorth, email, password } = input;
-      // Create new user with isAdmin explicitly set as a string.
+      // Create new user with isAdmin explicitly set to "false"
       const newUser: IUser = new User({
         fullName,
         phoneNumber,
@@ -50,17 +50,24 @@ export const resolvers = {
     },
 
     createUser: async (_: any, { input }: { input: any }, { user }: { user: any }) => {
-      if (!user || !isAdminUser(user)) {
+      if (!user) {
+        throw new AuthenticationError('Not authenticated');
+      }
+      if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
-      // Ensure the new user is created with isAdmin as "false"
-      const newUser: IUser = new User({ ...input, isAdmin: "false" });
+      // Remove any isAdmin field from input and force it to "false"
+      const { isAdmin, ...rest } = input;
+      const newUser: IUser = new User({ ...rest, isAdmin: "false" });
       await newUser.save();
       return newUser;
     },
 
     updateUser: async (_: any, { id, input }: { id: string; input: any }, { user }: { user: any }) => {
-      if (!user || !isAdminUser(user)) {
+      if (!user) {
+        throw new AuthenticationError('Not authenticated');
+      }
+      if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
       const updatedUser = await User.findByIdAndUpdate(id, input, { new: true });
@@ -69,7 +76,10 @@ export const resolvers = {
     },
 
     deleteUser: async (_: any, { id }: { id: string }, { user }: { user: any }) => {
-      if (!user || !isAdminUser(user)) {
+      if (!user) {
+        throw new AuthenticationError('Not authenticated');
+      }
+      if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
       const deletedUser = await User.findByIdAndDelete(id);
@@ -85,14 +95,17 @@ export const resolvers = {
     },
 
     allUsers: async (_: any, __: any, { user }: { user: any }) => {
-      if (!user || !isAdminUser(user)) {
+      if (!user) {
+        throw new AuthenticationError('Not authenticated');
+      }
+      if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
       return await User.find();
     }
   },
 
-  // Field resolver for the User type to return isAdmin as stored (a string).
+  // Field resolver: return the isAdmin field as stored (a string)
   User: {
     isAdmin: (parent: any) => {
       return parent.isAdmin;
