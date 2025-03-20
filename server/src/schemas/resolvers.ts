@@ -4,7 +4,7 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
 
-// Helper function to ensure isAdmin is interpreted as a boolean.
+// Helper to convert the isAdmin field to a boolean.
 function isAdminUser(user: any): boolean {
   return !!user && (user.isAdmin === true || user.isAdmin === "true");
 }
@@ -13,7 +13,7 @@ export const resolvers = {
   Mutation: {
     registerUser: async (_: any, { input }: { input: any }) => {
       const { fullName, phoneNumber, address, employer, netWorth, email, password } = input;
-      // Create new user with isAdmin explicitly set to false.
+      // Create new user with isAdmin set to false.
       const newUser: IUser = new User({
         fullName,
         phoneNumber,
@@ -26,7 +26,6 @@ export const resolvers = {
       });
       await newUser.save();
 
-      // Sign token with isAdmin cast using our helper function.
       const token = jwt.sign(
         { id: newUser._id, email: newUser.email, isAdmin: isAdminUser(newUser) },
         JWT_SECRET,
@@ -50,17 +49,24 @@ export const resolvers = {
       return { token, user };
     },
 
-    createUser: async (_: any, { input }: { input: any }, { user }: { user: any }) => {
+    createUser: async (_: any, { input }: { input: any }, { user }: { user?: any }) => {
+      if (!user) {
+        console.error("createUser: Missing user in context");
+        throw new AuthenticationError('Not authenticated');
+      }
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
-      // Ensure new user is created with isAdmin as a Boolean false.
       const newUser: IUser = new User({ ...input, isAdmin: false });
       await newUser.save();
       return newUser;
     },
 
-    updateUser: async (_: any, { id, input }: { id: string; input: any }, { user }: { user: any }) => {
+    updateUser: async (_: any, { id, input }: { id: string; input: any }, { user }: { user?: any }) => {
+      if (!user) {
+        console.error("updateUser: Missing user in context");
+        throw new AuthenticationError('Not authenticated');
+      }
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
@@ -69,34 +75,42 @@ export const resolvers = {
       return updatedUser;
     },
 
-    deleteUser: async (_: any, { id }: { id: string }, { user }: { user: any }) => {
+    deleteUser: async (_: any, { id }: { id: string }, { user }: { user?: any }) => {
+      if (!user) {
+        console.error("deleteUser: Missing user in context");
+        throw new AuthenticationError('Not authenticated');
+      }
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
       const deletedUser = await User.findByIdAndDelete(id);
       if (!deletedUser) throw new Error('User not found');
       return { message: 'User deleted successfully' };
-    },
+    }
   },
 
   Query: {
-    me: async (_: any, __: any, { user }: { user: any }) => {
+    me: async (_: any, __: any, { user }: { user?: any }) => {
       if (!user) throw new AuthenticationError('Not authenticated');
       return await User.findById(user.id);
     },
 
-    allUsers: async (_: any, __: any, { user }: { user: any }) => {
+    allUsers: async (_: any, __: any, { user }: { user?: any }) => {
+      if (!user) {
+        console.error("allUsers: Missing user in context");
+        throw new AuthenticationError('Not authenticated');
+      }
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
       return await User.find();
-    },
+    }
   },
 
-  // Field resolver for the User type to guarantee isAdmin is returned as a boolean.
+  // Field resolver for User so that isAdmin is always a boolean.
   User: {
     isAdmin: (parent: any) => {
       return isAdminUser(parent);
-    },
-  },
+    }
+  }
 };
