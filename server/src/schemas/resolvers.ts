@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';
+const JWT_SECRET = process.env.JWT_SECRET_KEY || 'your_jwt_secret';
 
 // Helper function: returns true only if user.isAdmin is exactly "true"
 function isAdminUser(user: any): boolean {
