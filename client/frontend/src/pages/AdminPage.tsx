@@ -27,7 +27,7 @@ const ADD_USER = gql`
     $netWorth: Float!
     $email: String!
     $password: String!
-    $isAdmin: Boolean!
+    $isAdmin: String!
   ) {
     createUser(
       input: {
@@ -62,7 +62,7 @@ const UPDATE_USER = gql`
     $employer: String
     $netWorth: Float
     $email: String
-    $isAdmin: Boolean
+    $isAdmin: String
   ) {
     updateUser(
       id: $id
@@ -246,7 +246,7 @@ const AdminPage: React.FC = () => {
           netWorth: netWorth,
           email: newUser.email,
           password: newUser.password,
-          isAdmin: newUser.isAdmin,
+          isAdmin: newUser.isAdmin ? "true" : "false",
         },
       });
       setNewUser({
@@ -291,7 +291,7 @@ const AdminPage: React.FC = () => {
           employer: editingUserData.employer,
           netWorth: netWorth,
           email: editingUserData.email,
-          isAdmin: editingUserData.isAdmin,
+          isAdmin: editingUserData.isAdmin ? "true" : "false",
         },
       });
       setEditingUserId(null);
@@ -564,7 +564,7 @@ const AdminPage: React.FC = () => {
                           {user.email}
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
-                          {user.isAdmin ? "Yes" : "No"}
+                          {user.isAdmin === "true" ? "Yes" : "No"}
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700 space-x-2">
                           <button
@@ -577,7 +577,7 @@ const AdminPage: React.FC = () => {
                                 employer: user.employer,
                                 netWorth: String(user.netWorth),
                                 email: user.email,
-                                isAdmin: user.isAdmin,
+                                isAdmin: user.isAdmin === "true", // convert string to boolean
                               });
                             }}
                             className="px-2 py-1 bg-blue-600 rounded hover:bg-blue-700"

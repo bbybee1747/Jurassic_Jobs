@@ -9,7 +9,7 @@ export const typeDefs = gql`
     employer: String!
     netWorth: Float!
     email: String!
-    isAdmin: Boolean!
+    isAdmin: String!
   }
 
   type AuthPayload {
