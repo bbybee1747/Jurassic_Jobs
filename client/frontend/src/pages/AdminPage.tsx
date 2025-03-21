@@ -111,7 +111,7 @@ const GET_DINOSAURS = gql`
 
 const ADD_DINOSAUR = gql`
   mutation AddDinosaur(
-    $age: Float!
+    $age: Int
     $species: String!
     $size: String!
     $price: Float!
@@ -142,7 +142,7 @@ const ADD_DINOSAUR = gql`
 const UPDATE_DINOSAUR = gql`
   mutation UpdateDinosaur(
     $id: ID!
-    $age: Float
+    $age: Int
     $species: String
     $size: String
     $price: Float
@@ -338,7 +338,7 @@ const AdminPage: React.FC = () => {
 
   const handleAddDinosaur = async (e: FormEvent) => {
     e.preventDefault();
-    const age = parseFloat(newDino.age);
+    const age = parseInt(newDino.age);
     const price = parseFloat(newDino.price);
     if (
       newDino.age === "" ||
@@ -385,7 +385,7 @@ const AdminPage: React.FC = () => {
   };
 
   const submitDinoUpdate = async (id: string) => {
-    const age = parseFloat(editingDinoData.age);
+    const age = parseInt(editingDinoData.age);
     const price = parseFloat(editingDinoData.price);
     if (
       editingDinoData.age === "" ||
