@@ -111,7 +111,7 @@ const GET_DINOSAURS = gql`
 
 const ADD_DINOSAUR = gql`
   mutation AddDinosaur(
-    $age: Float!
+    $age: Int
     $species: String!
     $size: String!
     $price: Float!
@@ -142,7 +142,7 @@ const ADD_DINOSAUR = gql`
 const UPDATE_DINOSAUR = gql`
   mutation UpdateDinosaur(
     $id: ID!
-    $age: Float
+    $age: Int
     $species: String
     $size: String
     $price: Float
@@ -338,7 +338,7 @@ const AdminPage: React.FC = () => {
 
   const handleAddDinosaur = async (e: FormEvent) => {
     e.preventDefault();
-    const age = parseFloat(newDino.age);
+    const age = parseInt(newDino.age);
     const price = parseFloat(newDino.price);
     if (
       newDino.age === "" ||
@@ -385,7 +385,7 @@ const AdminPage: React.FC = () => {
   };
 
   const submitDinoUpdate = async (id: string) => {
-    const age = parseFloat(editingDinoData.age);
+    const age = parseInt(editingDinoData.age);
     const price = parseFloat(editingDinoData.price);
     if (
       editingDinoData.age === "" ||
@@ -461,60 +461,73 @@ const AdminPage: React.FC = () => {
                       <>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_fullName"
                             type="text"
                             name="fullName"
                             value={editingUserData.fullName}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="name"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_phoneNumber"
                             type="text"
                             name="phoneNumber"
                             value={editingUserData.phoneNumber}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="tel"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_address"
                             type="text"
                             name="address"
                             value={editingUserData.address}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="street-address"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_employer"
                             type="text"
                             name="employer"
                             value={editingUserData.employer}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="organization"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_netWorth"
                             type="number"
                             name="netWorth"
                             value={editingUserData.netWorth}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editUser_email"
                             type="email"
                             name="email"
                             value={editingUserData.email}
                             onChange={handleEditUserChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="email"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700 text-center">
                           <input
+                            id="editUser_isAdmin"
                             type="checkbox"
                             name="isAdmin"
                             checked={editingUserData.isAdmin}
@@ -601,6 +614,7 @@ const AdminPage: React.FC = () => {
           <h3 className="text-2xl font-semibold">Add New User</h3>
           <div className="flex flex-col md:flex-row md:space-x-4">
             <input
+              id="newUser_fullName"
               type="text"
               name="fullName"
               placeholder="Full Name"
@@ -608,8 +622,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="name"
             />
             <input
+              id="newUser_phoneNumber"
               type="text"
               name="phoneNumber"
               placeholder="Phone Number"
@@ -617,8 +633,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="tel"
             />
             <input
+              id="newUser_address"
               type="text"
               name="address"
               placeholder="Address"
@@ -626,10 +644,12 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="street-address"
             />
           </div>
           <div className="flex flex-col md:flex-row md:space-x-4 mt-2">
             <input
+              id="newUser_employer"
               type="text"
               name="employer"
               placeholder="Employer"
@@ -637,8 +657,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="organization"
             />
             <input
+              id="newUser_netWorth"
               type="number"
               name="netWorth"
               placeholder="Net Worth"
@@ -646,8 +668,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="off"
             />
             <input
+              id="newUser_email"
               type="email"
               name="email"
               placeholder="Email"
@@ -655,8 +679,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="email"
             />
             <input
+              id="newUser_password"
               type="password"
               name="password"
               placeholder="Password"
@@ -664,10 +690,12 @@ const AdminPage: React.FC = () => {
               onChange={handleNewUserChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded flex-1"
               required
+              autoComplete="new-password"
             />
             <div className="flex items-center space-x-2">
-              <label htmlFor="isAdmin">Admin:</label>
+              <label htmlFor="newUser_isAdmin">Admin:</label>
               <input
+                id="newUser_isAdmin"
                 type="checkbox"
                 name="isAdmin"
                 checked={newUser.isAdmin}
@@ -723,55 +751,67 @@ const AdminPage: React.FC = () => {
                       <>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editDino_age"
                             type="number"
                             name="age"
                             value={editingDinoData.age}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editDino_species"
                             type="text"
                             name="species"
                             value={editingDinoData.species}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editDino_size"
                             type="text"
                             name="size"
                             value={editingDinoData.size}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editDino_price"
                             type="number"
                             name="price"
                             value={editingDinoData.price}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <input
+                            id="editDino_imageUrl"
                             type="text"
                             name="imageUrl"
                             value={editingDinoData.imageUrl}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">
                           <textarea
+                            id="editDino_description"
                             name="description"
                             value={editingDinoData.description}
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
+                            autoComplete="off"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700 space-x-2">
@@ -850,6 +890,7 @@ const AdminPage: React.FC = () => {
           <h3 className="text-2xl font-semibold">Add New Dinosaur</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
+              id="newDino_age"
               type="number"
               name="age"
               placeholder="Age"
@@ -857,8 +898,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
               required
+              autoComplete="off"
             />
             <input
+              id="newDino_species"
               type="text"
               name="species"
               placeholder="Species"
@@ -866,8 +909,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
               required
+              autoComplete="off"
             />
             <input
+              id="newDino_size"
               type="text"
               name="size"
               placeholder="Size"
@@ -875,8 +920,10 @@ const AdminPage: React.FC = () => {
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
               required
+              autoComplete="off"
             />
             <input
+              id="newDino_price"
               type="number"
               name="price"
               placeholder="Price"
@@ -884,21 +931,26 @@ const AdminPage: React.FC = () => {
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
               required
+              autoComplete="off"
             />
             <input
+              id="newDino_imageUrl"
               type="text"
               name="imageUrl"
               placeholder="Image URL (optional)"
               value={newDino.imageUrl}
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
+              autoComplete="off"
             />
             <textarea
+              id="newDino_description"
               name="description"
               placeholder="Description (optional)"
               value={newDino.description}
               onChange={handleNewDinoChange}
               className="p-2 bg-gray-800 border border-gray-700 rounded"
+              autoComplete="off"
             />
           </div>
           <button
