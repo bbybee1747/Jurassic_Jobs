@@ -11,6 +11,10 @@ const JeepDinoGame: React.FC = () => {
   const [score, setScore] = useState(0);
   const animationFrameRef = useRef<number | null>(null);
 
+  // Track Jeep's horizontal movement state
+  const moveLeft = useRef(false);
+  const moveRight = useRef(false);
+
   useEffect(() => {
     console.log("🎮 useEffect triggered");
 
@@ -31,38 +35,10 @@ const JeepDinoGame: React.FC = () => {
     canvas.width = 800;
     canvas.height = 400;
 
-    let jeep = {
-      x: 100,
-      y: 300,
-      width: 100,
-      height: 60,
-      dy: 0,
-      jumping: false,
-    };
-    let obstacles: {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      cleared: boolean;
-      isGoldenEgg: boolean;
-    }[] = [];
-    let pterodactyl = {
-      x: -100,
-      y: 50,
-      width: 80,
-      height: 60,
-      speed: 3,
-      active: false,
-    };
-    let charles = {
-      x: -100,
-      y: 50,
-      width: 80,
-      height: 60,
-      speed: 3,
-      active: false,
-    };
+    let jeep = { x: 100, y: 300, width: 100, height: 60, dy: 0, jumping: false };
+    let obstacles: { x: number; y: number; width: number; height: number; cleared: boolean; isGoldenEgg: boolean }[] = [];
+    let pterodactyl = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false };
+    let charles = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false }; // Charles object
     let gravity = 0.6;
     let frame = 0;
 
@@ -72,7 +48,7 @@ const JeepDinoGame: React.FC = () => {
     const rockImage = new Image();
     const charlesImage = new Image();
     let imagesLoaded = 0;
-    const totalImages = 5;
+    const totalImages = 5; // Updated: Added Charles image
 
     const checkImagesLoaded = () => {
       imagesLoaded++;
@@ -91,13 +67,10 @@ const JeepDinoGame: React.FC = () => {
     charlesImage.onload = checkImagesLoaded;
 
     jeepImage.onerror = () => console.error("❌ Failed to load jeep image.");
-    goldeneggImage.onerror = () =>
-      console.error("❌ Failed to load golden egg image.");
-    pterodactylImage.onerror = () =>
-      console.error("❌ Failed to load pterodactyl image.");
+    goldeneggImage.onerror = () => console.error("❌ Failed to load golden egg image.");
+    pterodactylImage.onerror = () => console.error("❌ Failed to load pterodactyl image.");
     rockImage.onerror = () => console.error("❌ Failed to load rock image.");
-    charlesImage.onerror = () =>
-      console.error("❌ Failed to load Charles image.");
+    charlesImage.onerror = () => console.error("❌ Failed to load Charles image.");
 
     jeepImage.src = "/jeep.png";
     goldeneggImage.src = "/goldenegg.png";
@@ -106,15 +79,30 @@ const JeepDinoGame: React.FC = () => {
     charlesImage.src = "/charles.png";
 
     const jump = (event: KeyboardEvent) => {
-      if (event.code === "Space" && !jeep.jumping && isRunning) {
-        event.preventDefault();
-        console.log("⬆️ Jeep jumping!");
-        jeep.dy = -12;
-        jeep.jumping = true;
+      if (event.code === "Space") {
+        event.preventDefault(); // Always prevent default Spacebar behavior (scrolling)
+
+        if (isRunning && !jeep.jumping) { // Allow only one jump
+          console.log("⬆️ Jeep jumping!");
+          jeep.dy = -15; // Increase vertical velocity for a higher jump
+          jeep.jumping = true;
+        }
       }
-      if (event.code === "ArrowRight" && isRunning) {
-        console.log("🏎️ Jeep speeding up!");
-        setSpeed(8);
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.code === "ArrowLeft") {
+        moveLeft.current = true; // Start moving left
+      } else if (event.code === "ArrowRight") {
+        moveRight.current = true; // Start moving right
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.code === "ArrowLeft") {
+        moveLeft.current = false; // Stop moving left
+      } else if (event.code === "ArrowRight") {
+        moveRight.current = false; // Stop moving right
       }
     };
 
@@ -127,7 +115,7 @@ const JeepDinoGame: React.FC = () => {
 
     const spawnPterodactyl = () => {
       if (!pterodactyl.active) {
-        pterodactyl.x = canvas.width;
+        pterodactyl.x = canvas.width; // Start from the right side
         pterodactyl.active = true;
         console.log("🦖 Pterodactyl spawned!");
       }
@@ -135,9 +123,9 @@ const JeepDinoGame: React.FC = () => {
 
     const spawnCharles = () => {
       if (!charles.active) {
-        charles.x = canvas.width;
+        charles.x = canvas.width; // Start from the right side
         charles.active = true;
-        pterodactyl.active = false;
+        pterodactyl.active = false; // Ensure pterodactyl disappears when Charles appears
         console.log("👨‍💻 Charles spawned!");
       }
     };
@@ -158,35 +146,53 @@ const JeepDinoGame: React.FC = () => {
         return;
       }
 
+      // Clear the canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw sky gradient
+      // Draw the sky (blue and yellow gradient)
       const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
-      skyGradient.addColorStop(0, "#87CEEB");
-      skyGradient.addColorStop(1, "#FFD700");
+      skyGradient.addColorStop(0, "#87CEEB"); // Light blue
+      skyGradient.addColorStop(1, "#FFD700"); // Yellow
       ctx.fillStyle = skyGradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
 
-      // Draw grass
-      ctx.fillStyle = "#4CAF50";
-      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
+      // Draw the grass (green)
+      ctx.fillStyle = "#4CAF50"; // Green
+      ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2); // Fixed grass height
 
       frame++;
 
       // Update Jeep position
       jeep.y += jeep.dy;
       jeep.dy += gravity;
+
+      // Update Jeep's horizontal position based on movement state
+      if (moveLeft.current) {
+        jeep.x -= 5; // Move left
+      }
+      if (moveRight.current) {
+        jeep.x += 5; // Move right
+      }
+
+      // Ensure the Jeep stays within the canvas bounds
+      if (jeep.x < 0) {
+        jeep.x = 0; // Prevent Jeep from moving off the left side
+      } else if (jeep.x + jeep.width > canvas.width) {
+        jeep.x = canvas.width - jeep.width; // Prevent Jeep from moving off the right side
+      }
+
       if (jeep.y > 300) {
         jeep.y = 300;
-        jeep.jumping = false;
+        jeep.jumping = false; // Reset jumping state when landing
+        console.log("🛬 Jeep landed!");
       }
 
       // Draw Jeep
       ctx.drawImage(jeepImage, jeep.x, jeep.y, jeep.width, jeep.height);
 
-      // Add obstacles
+      // Add new obstacles (golden eggs or rocks)
       if (frame % 100 === 0) {
-        const isGoldenEgg = Math.random() < 0.5;
+        const isGoldenEgg = Math.random() < 0.5; // 50% chance of spawning a golden egg
         obstacles.push({
           x: canvas.width,
           y: 320,
@@ -198,18 +204,21 @@ const JeepDinoGame: React.FC = () => {
         console.log(`🚧 New ${isGoldenEgg ? "golden egg" : "rock"} added`);
       }
 
+      // Update and draw obstacles
       obstacles.forEach((obs, index) => {
         obs.x -= speed;
         if (obs.x + obs.width < 0) {
           obstacles.splice(index, 1);
         }
 
+        // Draw obstacle (golden egg or rock)
         if (obs.isGoldenEgg) {
           ctx.drawImage(goldeneggImage, obs.x, obs.y, obs.width, obs.height);
         } else {
           ctx.drawImage(rockImage, obs.x, obs.y, obs.width, obs.height);
         }
 
+        // Collision detection between Jeep and obstacles
         let jeepBottom = jeep.y + jeep.height;
         let jeepRight = jeep.x + jeep.width;
         let jeepLeft = jeep.x;
@@ -223,129 +232,78 @@ const JeepDinoGame: React.FC = () => {
           jeepBottom >= obsTop + 5 &&
           jeep.y + jeep.height - obs.y < 20
         ) {
-          console.log(
-            `💀 Collision detected! Jeep hit ${
-              obs.isGoldenEgg ? "golden egg" : "rock"
-            }`
-          );
+          console.log(`💀 Collision detected! Jeep hit ${obs.isGoldenEgg ? "golden egg" : "rock"}`);
           setIsRunning(false);
           setIsGameOver(true);
+
           if (animationFrameRef.current) {
             cancelAnimationFrame(animationFrameRef.current);
           }
           return;
         }
 
+        // Check if Jeep successfully jumps over the obstacle
         if (!obs.cleared && obsRight < jeepLeft) {
-          console.log(
-            `🎉 Jeep cleared a ${obs.isGoldenEgg ? "golden egg" : "rock"}!`
-          );
-          setScore((prevScore) => prevScore + (obs.isGoldenEgg ? 5 : 1));
-          obs.cleared = true;
+          console.log(`🎉 Jeep cleared a ${obs.isGoldenEgg ? "golden egg" : "rock"}!`);
+          setScore((prevScore) => prevScore + (obs.isGoldenEgg ? 5 : 1)); // Reward 5 points for golden egg, 1 point for rock
+          obs.cleared = true; // Mark the obstacle as cleared
         }
       });
 
-      // Update and draw pterodactyl
+      // Update and draw pterodactyl (no collision detection)
       if (pterodactyl.active) {
-        pterodactyl.x -= pterodactyl.speed;
-        ctx.drawImage(
-          pterodactylImage,
-          pterodactyl.x,
-          pterodactyl.y,
-          pterodactyl.width,
-          pterodactyl.height
-        );
+        pterodactyl.x -= pterodactyl.speed; // Move pterodactyl to the left
+        ctx.drawImage(pterodactylImage, pterodactyl.x, pterodactyl.y, pterodactyl.width, pterodactyl.height);
 
-        let jeepBottom = jeep.y + jeep.height;
-        let jeepRight = jeep.x + jeep.width;
-        let jeepLeft = jeep.x;
-        let pterodactylBottom = pterodactyl.y + pterodactyl.height;
-        let pterodactylRight = pterodactyl.x + pterodactyl.width;
-        let pterodactylLeft = pterodactyl.x;
-
-        if (
-          jeepRight > pterodactylLeft &&
-          jeepLeft < pterodactylRight &&
-          jeepBottom >= pterodactyl.y &&
-          jeep.y <= pterodactylBottom
-        ) {
-          console.log("💀 Collision detected! Jeep hit pterodactyl!");
-          setIsRunning(false);
-          setIsGameOver(true);
-          if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-          }
-          return;
-        }
-
+        // Reset pterodactyl when it goes off-screen
         if (pterodactyl.x + pterodactyl.width < 0) {
           pterodactyl.active = false;
         }
       }
 
-      // Update and draw Charles
+      // Update and draw Charles (no collision detection)
       if (charles.active) {
-        charles.x -= charles.speed;
-        ctx.drawImage(
-          charlesImage,
-          charles.x,
-          charles.y,
-          charles.width,
-          charles.height
-        );
+        charles.x -= charles.speed; // Move Charles to the left
+        ctx.drawImage(charlesImage, charles.x, charles.y, charles.width, charles.height);
+
+        // Draw "Happy Coding" text below Charles
         ctx.fillStyle = "black";
         ctx.font = "16px Arial";
-        ctx.fillText(
-          "Happy Coding",
-          charles.x,
-          charles.y + charles.height + 20
-        );
+        ctx.fillText("Happy Coding", charles.x, charles.y + charles.height + 20);
 
-        let jeepBottom = jeep.y + jeep.height;
-        let jeepRight = jeep.x + jeep.width;
-        let jeepLeft = jeep.x;
-        let charlesBottom = charles.y + charles.height;
-        let charlesRight = charles.x + charles.width;
-        let charlesLeft = charles.x;
-
-        if (
-          jeepRight > charlesLeft &&
-          jeepLeft < charlesRight &&
-          jeepBottom >= charles.y &&
-          jeep.y <= charlesBottom
-        ) {
-          console.log("💀 Collision detected! Jeep hit Charles!");
-          setIsRunning(false);
-          setIsGameOver(true);
-          if (animationFrameRef.current) {
-            cancelAnimationFrame(animationFrameRef.current);
-          }
-          return;
-        }
-
+        // Reset Charles when it goes off-screen
         if (charles.x + charles.width < 0) {
           charles.active = false;
         }
       }
 
+      // Spawn pterodactyl every 5 seconds (300 frames at 60 FPS)
       if (frame % 300 === 0 && !charles.active) {
         spawnPterodactyl();
       }
 
+      // Spawn Charles every 10 seconds (600 frames at 60 FPS)
       if (frame % 600 === 0) {
         spawnCharles();
       }
 
+      // Continue the game loop
       animationFrameRef.current = requestAnimationFrame(update);
     };
 
+    // Add event listeners for jumping, movement, and slowing down
     window.addEventListener("keydown", jump);
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
     window.addEventListener("keyup", slowDown);
 
     return () => {
       console.log("🚪 Cleaning up event listener...");
       window.removeEventListener("keydown", jump);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("keyup", slowDown);
+
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
@@ -358,22 +316,36 @@ const JeepDinoGame: React.FC = () => {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-start min-h-screen bg-gray-900 p-6">
-      <h2 className="m-2 text-2xl text-white">Extinction Drift</h2>
-      <h2 className="m-2 text-xl text-white">Score: {score}</h2>
+    <div style={{ textAlign: "center", position: "relative", height: "100vh" }}>
+      <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Extinction Drift</h2>
+      <h2 style={{ margin: "10px", fontSize: "20px", color: "white" }}>Score: {score}</h2>
       <canvas
         ref={canvasRef}
-        className="border-2 border-white rounded-lg mx-auto block"
+        style={{ border: "2px groove white", display: "block", margin: "auto" }}
       />
-      {!isLoaded && <p className="mt-4 text-gray-300">⏳ Loading game...</p>}
+      {!isLoaded && <p>⏳ Loading game...</p>}
       {isGameOver && (
-        <div className="absolute top-[30%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-          <h2 className="m-2 text-2xl text-white">
-            Game Over! You hit an obstacle!
-          </h2>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+          }}
+        >
+          <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Game Over! You hit an obstacle!</h2>
           <button
             onClick={restartGame}
-            className="mt-4 px-6 py-2 text-lg font-semibold bg-green-500 text-black rounded-lg hover:bg-green-600 transition-all"
+            style={{
+              padding: "10px 20px",
+              fontSize: "16px",
+              cursor: "pointer",
+              backgroundColor: "#4CAF50",
+              color: "black",
+              border: "none",
+              borderRadius: "5px",
+            }}
           >
             Restart
           </button>
