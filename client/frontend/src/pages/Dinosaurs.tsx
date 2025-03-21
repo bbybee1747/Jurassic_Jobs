@@ -21,6 +21,26 @@ function Dinosaurs() {
     variables: { sortBy: sortType },
   });
 
+  // Handle purchasing a dinosaur
+  const handlePurchase = (dino: any) => {
+    // Retrieve any already purchased dinosaurs from localStorage
+    const stored = localStorage.getItem("purchasedDinosaurs");
+    let purchasedDinosaurs = stored ? JSON.parse(stored) : [];
+
+    // Optionally, prevent duplicate purchases (uncomment below if desired)
+    // if (purchasedDinosaurs.find((item: any) => item.id === dino.id)) {
+    //   alert(`${dino.species} has already been purchased!`);
+    //   return;
+    // }
+
+    purchasedDinosaurs.push(dino);
+    localStorage.setItem(
+      "purchasedDinosaurs",
+      JSON.stringify(purchasedDinosaurs)
+    );
+    alert(`You purchased ${dino.species}!`);
+  };
+
   return (
     <div className="flex flex-col items-center justify-start font-sans text-center">
       <div className="w-full max-w-4xl bg-gray-800 shadow-2xl rounded-2xl p-10 border border-gray-700 mt-8">
@@ -37,7 +57,7 @@ function Dinosaurs() {
             id="sort"
             value={sortType}
             onChange={(e) => setSortType(e.target.value)}
-            className="p-2 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent test-black"
+            className="p-2 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
           >
             <option value="age">Age</option>
             <option value="species">Species</option>
@@ -84,6 +104,12 @@ function Dinosaurs() {
                 {dino.description && (
                   <p className="text-white mt-2">{dino.description}</p>
                 )}
+                <button
+                  onClick={() => handlePurchase(dino)}
+                  className="mt-4 px-4 py-2 bg-yellow-500 text-gray-800 rounded hover:bg-yellow-600 transition-colors"
+                >
+                  Purchase
+                </button>
               </div>
             ))}
           </div>
