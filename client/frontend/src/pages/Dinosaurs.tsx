@@ -37,7 +37,7 @@ function Dinosaurs() {
             id="sort"
             value={sortType}
             onChange={(e) => setSortType(e.target.value)}
-            className="p-2 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
+            className="p-2 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent test-black"
           >
             <option value="age">Age</option>
             <option value="species">Species</option>
@@ -62,7 +62,7 @@ function Dinosaurs() {
             {data?.dinosaurs.map((dino: any) => (
               <div
                 key={dino.id}
-                className="bg-gray-700 p-4 rounded-lg shadow-md"
+                className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-lg shadow-md transform hover:scale-105 transition-transform"
               >
                 {dino.imageUrl ? (
                   <img
@@ -75,14 +75,14 @@ function Dinosaurs() {
                     <span className="text-gray-300">No Image</span>
                   </div>
                 )}
-                <h3 className="mt-2 text-xl font-bold text-white">
+                <h3 className="mt-2 text-2xl font-bold text-white">
                   {dino.species}
                 </h3>
-                <p className="text-gray-300">Age: {dino.age}</p>
-                <p className="text-gray-300">Size: {dino.size}</p>
-                <p className="text-gray-300">Price: ${dino.price}</p>
+                <p className="text-white">Age: {dino.age}</p>
+                <p className="text-white">Size: {dino.size}</p>
+                <p className="text-white">Price: ${dino.price}</p>
                 {dino.description && (
-                  <p className="text-gray-300 mt-2">{dino.description}</p>
+                  <p className="text-white mt-2">{dino.description}</p>
                 )}
               </div>
             ))}
