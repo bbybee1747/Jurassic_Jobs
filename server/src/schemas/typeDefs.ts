@@ -55,6 +55,7 @@ export const typeDefs = gql`
     netWorth: Float
     email: String
     password: String
+    isAdmin: String
   }
 
   type Mutation {
