@@ -16,7 +16,7 @@ import SNESPage from "./pages/SNESPage";
 import DinosaurSearch from "./pages/DinosaurSearch";
 import AdminPage from "./pages/AdminPage";
 import AdminRoute from "./AdminRoutes";
-import TermsOfService from "./pages/terms";
+import TermsOfService from "./pages/Terms";
 import PrivacyPolicy from "./pages/Privacy";
 
 function App() {
