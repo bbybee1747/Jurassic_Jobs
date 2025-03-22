@@ -16,6 +16,8 @@ import SNESPage from "./pages/SNESPage";
 import DinosaurSearch from "./pages/DinosaurSearch";
 import AdminPage from "./pages/AdminPage";
 import AdminRoute from "./AdminRoutes";
+import TermsOfService from "./pages/terms";
+import PrivacyPolicy from "./pages/Privacy";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -56,6 +58,8 @@ function App() {
             />
             <Route path="/snes" element={<SNESPage />} />
             <Route path="/search" element={<DinosaurSearch />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
           </Routes>
         </main>
         <Footer />
