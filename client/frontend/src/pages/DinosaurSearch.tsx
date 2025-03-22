@@ -19,11 +19,10 @@ const DinosaurSearch = () => {
         variables: { query },
       };
 
-      const response = await axios.post(
-        "http://localhost:5000/graphql",
-        graphqlQuery,
-        { headers: { "Content-Type": "application/json" } }
-      );
+      // Changed from "http://localhost:5000/graphql" to a relative URL "/graphql"
+      const response = await axios.post("/graphql", graphqlQuery, {
+        headers: { "Content-Type": "application/json" },
+      });
 
       console.log("GraphQL Response:", response.data);
       if (response.data.errors) {
