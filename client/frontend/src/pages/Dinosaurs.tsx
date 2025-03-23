@@ -15,7 +15,6 @@ const GET_DINOSAURS = gql`
   }
 `;
 
-// This mutation should be implemented on your backend to attach the dinosaur purchase to the user profile.
 const PURCHASE_DINOSAUR = gql`
   mutation PurchaseDinosaur($dinosaurId: ID!) {
     purchaseDinosaur(dinosaurId: $dinosaurId) {
@@ -43,7 +42,6 @@ function Dinosaurs() {
     },
   });
 
-  // Handle purchasing a dinosaur via the GraphQL mutation
   const handlePurchase = async (dino: any) => {
     try {
       const { data } = await purchaseDinosaur({

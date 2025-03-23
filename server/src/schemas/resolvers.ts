@@ -95,28 +95,25 @@ export const resolvers = {
 
     purchaseDinosaur: async (_: any, { dinosaurId }: { dinosaurId: string }, { user }: { user: any }) => {
       if (!user) {
-        console.error("❌ User not authenticated");
+        console.error("User not authenticated");
         throw new AuthenticationError('Not authenticated');
       }
-    
-      // Validate Dinosaur ID format
+
       if (!dinosaurId || dinosaurId.length !== 24) {
-        console.error("❌ Invalid Dinosaur ID:", dinosaurId);
+        console.error("Invalid Dinosaur ID:", dinosaurId);
         throw new Error("Invalid Dinosaur ID");
       }
     
-      console.log("🚀 purchaseDinosaur Mutation Called with ID:", dinosaurId);
-    
-      // Find the dinosaur in the database
+      console.log("purchaseDinosaur Mutation Called with ID:", dinosaurId);
+
       const dinosaur = await Dinosaur.findById(dinosaurId);
       if (!dinosaur) {
-        console.error("❌ Dinosaur not found in database:", dinosaurId);
+        console.error("Dinosaur not found in database:", dinosaurId);
         throw new Error('Dinosaur not found');
       }
     
-      console.log("✅ Dinosaur found:", dinosaur.species);
-    
-      // Construct the purchase object
+      console.log("Dinosaur found:", dinosaur.species);
+
       const purchaseData = {
         dinosaurId: dinosaur._id,
         age: dinosaur.age,
@@ -127,8 +124,7 @@ export const resolvers = {
         description: dinosaur.description,
         purchasedAt: new Date(),
       };
-    
-      // Update the user's purchases array
+
       const updatedUser = await User.findByIdAndUpdate(
         user.id,
         { $push: { purchases: purchaseData } },
@@ -139,14 +135,13 @@ export const resolvers = {
         console.error("❌ User not found in database:", user.id);
         throw new Error('User not found');
       }
-    
-      // Retrieve the newly added purchase.
-      // (Assuming the new purchase is appended to the purchases array)
+
       const newPurchase = updatedUser.purchases[updatedUser.purchases.length - 1];
+
+      await Dinosaur.findByIdAndDelete(dinosaurId);
     
-      console.log("✅ Purchase successful!");
+      console.log("Purchase successful!");
       
-      // Return the new purchase, mapping _id to id
       return {
         id: newPurchase._id,
         dinosaurId: newPurchase.dinosaurId,

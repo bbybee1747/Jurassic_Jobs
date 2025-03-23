@@ -1,7 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 
-// GraphQL Query to get the user's purchases
 const GET_USER_PURCHASES = gql`
   query GetUserPurchases {
     me {
