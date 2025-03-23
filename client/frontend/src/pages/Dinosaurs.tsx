@@ -132,11 +132,11 @@ function Dinosaurs() {
       <ReactModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
-        className="bg-white p-6 max-w-md mx-auto mt-20 rounded shadow-lg outline-none"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start"
+        className="bg-white p-8 w-full max-w-2xl mx-auto mt-20 rounded shadow-lg outline-none"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
       >
         <div className="flex justify-end">
-          <button onClick={closeModal} className="text-xl font-bold">
+          <button onClick={closeModal} className="text-2xl font-bold">
             &times;
           </button>
         </div>
