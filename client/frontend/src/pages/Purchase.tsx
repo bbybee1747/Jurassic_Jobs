@@ -1,21 +1,44 @@
-import { useState, useEffect } from "react";
+import { gql, useQuery } from "@apollo/client";
 import { Link } from "react-router-dom";
 
-function Purchases() {
-  const [loading, setLoading] = useState(true);
-  const [purchasedDinosaurs, setPurchasedDinosaurs] = useState<any[]>([]);
-
-  useEffect(() => {
-    // Retrieve purchased dinosaurs from localStorage
-    const stored = localStorage.getItem("purchasedDinosaurs");
-    if (stored) {
-      setPurchasedDinosaurs(JSON.parse(stored));
+// GraphQL Query to get the user's purchases
+const GET_USER_PURCHASES = gql`
+  query GetUserPurchases {
+    me {
+      id
+      purchases {
+        dinosaurId
+        age
+        species
+        size
+        price
+        imageUrl
+        description
+      }
     }
-    // Simulate a loading state (adjust or remove as needed)
-    setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-  }, []);
+  }
+`;
+
+function Purchases() {
+  const { data, loading, error } = useQuery(GET_USER_PURCHASES);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-10">
+        <p className="text-2xl font-semibold text-gray-300">Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 p-10">
+        <p className="text-red-500">Error loading purchases.</p>
+      </div>
+    );
+  }
+
+  const purchasedDinosaurs = data?.me?.purchases || [];
 
   return (
     <div className="flex flex-col items-center justify-start font-sans text-center min-h-screen bg-gray-900 p-10">
@@ -24,19 +47,15 @@ function Purchases() {
           🦖 Purchase History
         </h1>
 
-        {loading ? (
-          <div className="text-center text-2xl font-semibold text-gray-300">
-            Loading...
-          </div>
-        ) : purchasedDinosaurs.length === 0 ? (
+        {purchasedDinosaurs.length === 0 ? (
           <div className="text-lg text-gray-300 text-center">
             <p>Nothing to display at this time.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {purchasedDinosaurs.map((dino) => (
+            {purchasedDinosaurs.map((dino: any) => (
               <div
-                key={dino.id}
+                key={dino.dinosaurId}
                 className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-lg shadow-md"
               >
                 {dino.imageUrl ? (
