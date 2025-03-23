@@ -13,6 +13,10 @@ const GET_USERS = gql`
       netWorth
       email
       isAdmin
+      purchases {
+        dinosaurId
+        species
+      }
     }
   }
 `;
@@ -710,6 +714,66 @@ const AdminPage: React.FC = () => {
             Add User
           </button>
         </form>
+      </section>
+
+      {/* New Purchases Section */}
+      <section className="mb-12">
+        <h2 className="text-3xl font-bold mb-4">User Purchases</h2>
+        {usersLoading ? (
+          <p>Loading purchases...</p>
+        ) : usersError ? (
+          <p>Error loading purchases.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-gray-800 rounded-lg">
+              <thead>
+                <tr>
+                  <th className="px-2 py-2 border-b border-gray-700">User</th>
+                  <th className="px-2 py-2 border-b border-gray-700">
+                    Dinosaur ID
+                  </th>
+                  <th className="px-2 py-2 border-b border-gray-700">
+                    Species
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {usersData?.allUsers.map((user: any) =>
+                  user.purchases && user.purchases.length > 0 ? (
+                    user.purchases.map((purchase: any, index: number) => (
+                      <tr
+                        key={`${user.id}-${index}`}
+                        className="hover:bg-gray-700"
+                      >
+                        <td className="px-2 py-2 border-b border-gray-700">
+                          {user.fullName}
+                        </td>
+                        <td className="px-2 py-2 border-b border-gray-700">
+                          {purchase.dinosaurId}
+                        </td>
+                        <td className="px-2 py-2 border-b border-gray-700">
+                          {purchase.species}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr key={user.id} className="hover:bg-gray-700">
+                      <td className="px-2 py-2 border-b border-gray-700">
+                        {user.fullName}
+                      </td>
+                      <td
+                        className="px-2 py-2 border-b border-gray-700"
+                        colSpan={2}
+                      >
+                        No Purchases
+                      </td>
+                    </tr>
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </section>
 
       <section>

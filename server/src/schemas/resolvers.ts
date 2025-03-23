@@ -54,7 +54,6 @@ export const resolvers = {
       if (!isAdminUser(user)) {
         throw new ForbiddenError('Access denied');
       }
-      const { isAdmin, ...rest } = input;
       const newUser: IUser = new User({
         ...input,
         isAdmin: input.isAdmin === "true" ? "true" : "false",
@@ -108,6 +107,10 @@ export const resolvers = {
   User: {
     isAdmin: (parent: any) => {
       return parent.isAdmin;
+    },
+    purchases: (parent: any) => {
+      // Simply return the purchases array stored in the user document
+      return parent.purchases;
     }
   }
 };

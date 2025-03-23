@@ -1,6 +1,18 @@
 import { gql } from 'apollo-server-express';
 
 export const typeDefs = gql`
+  type Purchase {
+    dinosaurId: ID!
+    age: Int!
+    species: String!
+    size: String!
+    price: Float!
+    imageUrl: String
+    description: String
+    createdAt: String
+    updatedAt: String
+  }
+
   type User {
     id: ID!
     fullName: String!
@@ -10,6 +22,7 @@ export const typeDefs = gql`
     netWorth: Float!
     email: String!
     isAdmin: String!
+    purchases: [Purchase]!
   }
 
   type AuthPayload {
@@ -71,4 +84,3 @@ export const typeDefs = gql`
     allUsers: [User!]!
   }
 `;
-

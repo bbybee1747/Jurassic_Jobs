@@ -1,6 +1,18 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
+export interface IPurchase {
+  dinosaurId: mongoose.Types.ObjectId;
+  age: number;
+  species: string;
+  size: string;
+  price: number;
+  imageUrl?: string;
+  description?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 export interface IUser extends Document {
   fullName: string;
   phoneNumber: string;
@@ -10,8 +22,22 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isAdmin: string;
+  purchases: IPurchase[];
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
+
+const PurchaseSchema: Schema = new Schema(
+  {
+    dinosaurId: { type: Schema.Types.ObjectId, required: true },
+    age: { type: Number, required: true },
+    species: { type: String, required: true },
+    size: { type: String, required: true },
+    price: { type: Number, required: true },
+    imageUrl: { type: String },
+    description: { type: String },
+  },
+  { timestamps: true }
+);
 
 const UserSchema: Schema = new Schema({
   fullName: { type: String, required: true },
@@ -22,6 +48,7 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   isAdmin: { type: String, default: "false" },
+  purchases: { type: [PurchaseSchema], default: [] },
 });
 
 UserSchema.pre<IUser>('save', async function(next) {
