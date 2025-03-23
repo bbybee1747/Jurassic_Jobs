@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
 
 const JeepDinoGame: React.FC = () => {
-  const [gameKey, setGameKey] = useState(0);
-  const handleRestart = () => setGameKey((prev) => prev + 1);
+  const [gameKey] = useState(0);
   return (
     <div
       key={gameKey}
       style={{ textAlign: "center", position: "relative", height: "100vh" }}
     >
-      <Game onRestart={handleRestart} />
+      <Game />
     </div>
   );
 };
 
-const Game: React.FC<{ onRestart: () => void }> = ({ onRestart }) => {
+const Game: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isGameOver, setIsGameOver] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
