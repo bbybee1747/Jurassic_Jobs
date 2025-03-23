@@ -116,7 +116,7 @@ export const resolvers = {
     
       console.log("✅ Dinosaur found:", dinosaur.species);
     
-      // Create a purchase object to be saved
+      // Construct the purchase object
       const purchaseData = {
         dinosaurId: dinosaur._id,
         age: dinosaur.age,
@@ -128,7 +128,7 @@ export const resolvers = {
         purchasedAt: new Date(),
       };
     
-      // Save purchase to user profile
+      // Update the user's purchases array
       const updatedUser = await User.findByIdAndUpdate(
         user.id,
         { $push: { purchases: purchaseData } },
@@ -140,10 +140,26 @@ export const resolvers = {
         throw new Error('User not found');
       }
     
+      // Retrieve the newly added purchase.
+      // (Assuming the new purchase is appended to the purchases array)
+      const newPurchase = updatedUser.purchases[updatedUser.purchases.length - 1];
+    
       console.log("✅ Purchase successful!");
-      // Return the purchase data instead of the dinosaur object
-      return purchaseData;
+      
+      // Return the new purchase, mapping _id to id
+      return {
+        id: newPurchase._id,
+        dinosaurId: newPurchase.dinosaurId,
+        age: newPurchase.age,
+        species: newPurchase.species,
+        size: newPurchase.size,
+        price: newPurchase.price,
+        imageUrl: newPurchase.imageUrl,
+        description: newPurchase.description,
+        purchasedAt: newPurchase.purchasedAt,
+      };
     },
+    
   },    
   Query: {
     me: async (_: any, __: any, { user }: { user: any }) => {

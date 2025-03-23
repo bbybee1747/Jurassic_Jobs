@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcrypt";
 
 export interface IPurchase {
+  _id: string;
   dinosaurId: mongoose.Types.ObjectId;
   age: number;
   species: string;
