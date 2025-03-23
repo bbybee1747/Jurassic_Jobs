@@ -35,22 +35,41 @@ function Dinosaurs() {
   const { data, loading, error } = useQuery(GET_DINOSAURS, {
     variables: { sortBy: sortType },
   });
-  const [purchaseDinosaur] = useMutation(PURCHASE_DINOSAUR);
+  const [purchaseDinosaur] = useMutation(PURCHASE_DINOSAUR, {
+    context: {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    },
+  });
 
   // Handle purchasing a dinosaur via the GraphQL mutation
   const handlePurchase = async (dino: any) => {
     try {
-      await purchaseDinosaur({
-        variables: {
-          dinosaurId: dino.id,
+      const { data } = await purchaseDinosaur({
+        variables: { dinosaurId: dino.id },
+        context: {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         },
       });
-      alert(`You purchased ${dino.species}!`);
-      // Optionally, you could redirect to the Purchase.tsx page here.
-      // For example: navigate("/purchases");
-    } catch (err) {
-      console.error(err);
-      alert("Purchase failed. Please try again.");
+
+      if (data?.purchaseDinosaur) {
+        alert(`You purchased ${data.purchaseDinosaur.species}!`);
+      } else {
+        console.error("Mutation returned no data");
+        alert("Purchase failed. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Purchase failed:", err);
+      if (err.graphQLErrors) {
+        console.error("GraphQL Errors:", err.graphQLErrors);
+      }
+      if (err.networkError) {
+        console.error("Network Error:", err.networkError);
+      }
+      alert("Purchase failed. Check console for details.");
     }
   };
 
