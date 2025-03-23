@@ -3,7 +3,9 @@ import { gql, useQuery } from "@apollo/client";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "../components/Payment";
+import ReactModal from "react-modal";
 
+// GraphQL query to fetch dinosaurs
 const GET_DINOSAURS = gql`
   query GetDinosaurs($sortBy: String) {
     dinosaurs(sortBy: $sortBy) {
@@ -18,24 +20,37 @@ const GET_DINOSAURS = gql`
   }
 `;
 
-const stripePromise = loadStripe(
-  "pk_test_51R5tEE2L3rFkWURHbcQqmQTW3vDPilDObNkljbSGWm692rXVh7qRXyVS9kLLznlbYhfX0d0x15g5kQ51Af9knMAu00Qd1YnWK1"
-);
+// Load your Stripe publishable key (test mode)
+const stripePromise = loadStripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+
+// Set the root element for accessibility (adjust "#root" as needed)
+ReactModal.setAppElement("#root");
 
 function Dinosaurs() {
   const [sortType, setSortType] = useState("age");
   const [selectedDino, setSelectedDino] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { data, loading, error } = useQuery(GET_DINOSAURS, {
     variables: { sortBy: sortType },
   });
 
-  const handlePurchaseClick = (dino: any) => {
+  // Opens the modal and sets the selected dinosaur
+  const openModal = (dino: any) => {
     setSelectedDino(dino);
+    setIsModalOpen(true);
   };
 
+  // Closes the modal and resets the selected dinosaur
+  const closeModal = () => {
+    setSelectedDino(null);
+    setIsModalOpen(false);
+  };
+
+  // Callback after a successful payment
   const handlePaymentSuccess = () => {
     alert(`You purchased ${selectedDino.species}!`);
-    setSelectedDino(null);
+    closeModal();
   };
 
   return (
@@ -101,26 +116,39 @@ function Dinosaurs() {
                 {dino.description && (
                   <p className="text-white mt-2">{dino.description}</p>
                 )}
-                {selectedDino && selectedDino.id === dino.id ? (
-                  <Elements stripe={stripePromise}>
-                    <PaymentForm
-                      dinosaur={dino}
-                      onPaymentSuccess={handlePaymentSuccess}
-                    />
-                  </Elements>
-                ) : (
-                  <button
-                    onClick={() => handlePurchaseClick(dino)}
-                    className="mt-4 px-4 py-2 bg-yellow-500 text-gray-800 rounded hover:bg-yellow-600 transition-colors"
-                  >
-                    Purchase
-                  </button>
-                )}
+                <button
+                  onClick={() => openModal(dino)}
+                  className="mt-4 px-4 py-2 bg-yellow-500 text-gray-800 rounded hover:bg-yellow-600 transition-colors"
+                >
+                  Purchase
+                </button>
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* Modal for payment processing */}
+      <ReactModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        className="bg-white p-6 max-w-md mx-auto mt-20 rounded shadow-lg outline-none"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start"
+      >
+        <div className="flex justify-end">
+          <button onClick={closeModal} className="text-xl font-bold">
+            &times;
+          </button>
+        </div>
+        {selectedDino && (
+          <Elements stripe={stripePromise}>
+            <PaymentForm
+              dinosaur={selectedDino}
+              onPaymentSuccess={handlePaymentSuccess}
+            />
+          </Elements>
+        )}
+      </ReactModal>
     </div>
   );
 }
