@@ -1,9 +1,24 @@
 import { useState } from "react";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 
 const GET_DINOSAURS = gql`
   query GetDinosaurs($sortBy: String) {
     dinosaurs(sortBy: $sortBy) {
+      id
+      age
+      species
+      size
+      price
+      imageUrl
+      description
+    }
+  }
+`;
+
+// This mutation should be implemented on your backend to attach the dinosaur purchase to the user profile.
+const PURCHASE_DINOSAUR = gql`
+  mutation PurchaseDinosaur($dinosaurId: ID!) {
+    purchaseDinosaur(dinosaurId: $dinosaurId) {
       id
       age
       species
@@ -20,25 +35,23 @@ function Dinosaurs() {
   const { data, loading, error } = useQuery(GET_DINOSAURS, {
     variables: { sortBy: sortType },
   });
+  const [purchaseDinosaur] = useMutation(PURCHASE_DINOSAUR);
 
-  // Handle purchasing a dinosaur
-  const handlePurchase = (dino: any) => {
-    // Retrieve any already purchased dinosaurs from localStorage
-    const stored = localStorage.getItem("purchasedDinosaurs");
-    let purchasedDinosaurs = stored ? JSON.parse(stored) : [];
-
-    // Optionally, prevent duplicate purchases (uncomment below if desired)
-    // if (purchasedDinosaurs.find((item: any) => item.id === dino.id)) {
-    //   alert(`${dino.species} has already been purchased!`);
-    //   return;
-    // }
-
-    purchasedDinosaurs.push(dino);
-    localStorage.setItem(
-      "purchasedDinosaurs",
-      JSON.stringify(purchasedDinosaurs)
-    );
-    alert(`You purchased ${dino.species}!`);
+  // Handle purchasing a dinosaur via the GraphQL mutation
+  const handlePurchase = async (dino: any) => {
+    try {
+      await purchaseDinosaur({
+        variables: {
+          dinosaurId: dino.id,
+        },
+      });
+      alert(`You purchased ${dino.species}!`);
+      // Optionally, you could redirect to the Purchase.tsx page here.
+      // For example: navigate("/purchases");
+    } catch (err) {
+      console.error(err);
+      alert("Purchase failed. Please try again.");
+    }
   };
 
   return (
