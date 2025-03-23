@@ -31,13 +31,13 @@ export const dinosaurResolvers = {
           "https://api.openai.com/v1/chat/completions",
           {
             model: "gpt-3.5-turbo",
-            max_tokens: 100,
+            max_tokens: 120,
             temperature: 0.5,
             messages: [
               {
                 role: "system",
                 content:
-                  "You are a knowledgeable dinosaur expert. When given the name of a dinosaur, provide detailed factual information about it including its period, size, habitat, diet, and any interesting characteristics.",
+                  "You are a knowledgeable dinosaur expert. When given the name of a dinosaur, provide detailed factual information about it including its period, size, habitat, diet, and any interesting characteristics using less than 120 words.",
               },
               { role: "user", content: query },
             ],
