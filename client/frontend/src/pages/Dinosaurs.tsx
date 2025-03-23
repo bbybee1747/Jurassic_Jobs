@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import PaymentForm from "../components/Payment";
 
 const GET_DINOSAURS = gql`
   query GetDinosaurs($sortBy: String) {
@@ -15,60 +18,24 @@ const GET_DINOSAURS = gql`
   }
 `;
 
-const PURCHASE_DINOSAUR = gql`
-  mutation PurchaseDinosaur($dinosaurId: ID!) {
-    purchaseDinosaur(dinosaurId: $dinosaurId) {
-      id
-      age
-      species
-      size
-      price
-      imageUrl
-      description
-    }
-  }
-`;
+const stripePromise = loadStripe(
+  "pk_test_51R5tEE2L3rFkWURHbcQqmQTW3vDPilDObNkljbSGWm692rXVh7qRXyVS9kLLznlbYhfX0d0x15g5kQ51Af9knMAu00Qd1YnWK1"
+);
 
 function Dinosaurs() {
   const [sortType, setSortType] = useState("age");
+  const [selectedDino, setSelectedDino] = useState<any>(null);
   const { data, loading, error } = useQuery(GET_DINOSAURS, {
     variables: { sortBy: sortType },
   });
-  const [purchaseDinosaur] = useMutation(PURCHASE_DINOSAUR, {
-    context: {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    },
-  });
 
-  const handlePurchase = async (dino: any) => {
-    try {
-      const { data } = await purchaseDinosaur({
-        variables: { dinosaurId: dino.id },
-        context: {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      });
+  const handlePurchaseClick = (dino: any) => {
+    setSelectedDino(dino);
+  };
 
-      if (data?.purchaseDinosaur) {
-        alert(`You purchased ${data.purchaseDinosaur.species}!`);
-      } else {
-        console.error("Mutation returned no data");
-        alert("Purchase failed. Please try again.");
-      }
-    } catch (err: any) {
-      console.error("Purchase failed:", err);
-      if (err.graphQLErrors) {
-        console.error("GraphQL Errors:", err.graphQLErrors);
-      }
-      if (err.networkError) {
-        console.error("Network Error:", err.networkError);
-      }
-      alert("Purchase failed. Check console for details.");
-    }
+  const handlePaymentSuccess = () => {
+    alert(`You purchased ${selectedDino.species}!`);
+    setSelectedDino(null);
   };
 
   return (
@@ -134,12 +101,21 @@ function Dinosaurs() {
                 {dino.description && (
                   <p className="text-white mt-2">{dino.description}</p>
                 )}
-                <button
-                  onClick={() => handlePurchase(dino)}
-                  className="mt-4 px-4 py-2 bg-yellow-500 text-gray-800 rounded hover:bg-yellow-600 transition-colors"
-                >
-                  Purchase
-                </button>
+                {selectedDino && selectedDino.id === dino.id ? (
+                  <Elements stripe={stripePromise}>
+                    <PaymentForm
+                      dinosaur={dino}
+                      onPaymentSuccess={handlePaymentSuccess}
+                    />
+                  </Elements>
+                ) : (
+                  <button
+                    onClick={() => handlePurchaseClick(dino)}
+                    className="mt-4 px-4 py-2 bg-yellow-500 text-gray-800 rounded hover:bg-yellow-600 transition-colors"
+                  >
+                    Purchase
+                  </button>
+                )}
               </div>
             ))}
           </div>
