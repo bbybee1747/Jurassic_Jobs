@@ -1,5 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import bcrypt from 'bcrypt';
+import mongoose, { Schema, Document } from "mongoose";
+import bcrypt from "bcrypt";
 
 export interface IPurchase {
   dinosaurId: mongoose.Types.ObjectId;
@@ -9,8 +9,7 @@ export interface IPurchase {
   price: number;
   imageUrl?: string;
   description?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  purchasedAt: Date;
 }
 
 export interface IUser extends Document {
@@ -28,13 +27,14 @@ export interface IUser extends Document {
 
 const PurchaseSchema: Schema = new Schema(
   {
-    dinosaurId: { type: Schema.Types.ObjectId, required: true },
+    dinosaurId: { type: Schema.Types.ObjectId, ref: "Dinosaur", required: true },
     age: { type: Number, required: true },
     species: { type: String, required: true },
     size: { type: String, required: true },
     price: { type: Number, required: true },
     imageUrl: { type: String },
     description: { type: String },
+    purchasedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
@@ -51,8 +51,8 @@ const UserSchema: Schema = new Schema({
   purchases: { type: [PurchaseSchema], default: [] },
 });
 
-UserSchema.pre<IUser>('save', async function(next) {
-  if (!this.isModified('password')) return next();
+UserSchema.pre<IUser>("save", async function (next) {
+  if (!this.isModified("password")) return next();
   try {
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(this.password, salt);
@@ -63,8 +63,10 @@ UserSchema.pre<IUser>('save', async function(next) {
   }
 });
 
-UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+UserSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-export default mongoose.model<IUser>('User', UserSchema);
+export default mongoose.model<IUser>("User", UserSchema);

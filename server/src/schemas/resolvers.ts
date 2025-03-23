@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
+import Dinosaur from '../models/Dinosaur'; // <-- Import the Dinosaur model
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY || 'your_jwt_secret';
@@ -84,7 +85,46 @@ export const resolvers = {
       const deletedUser = await User.findByIdAndDelete(id);
       if (!deletedUser) throw new Error('User not found');
       return { message: 'User deleted successfully' };
-    }
+    },
+
+    // ✅ NEW MUTATION: purchaseDinosaur
+    purchaseDinosaur: async (_: any, { dinosaurId }: { dinosaurId: string }, { user }: { user: any }) => {
+      if (!user) {
+        throw new AuthenticationError('Not authenticated');
+      }
+
+      // Find the dinosaur by ID
+      const dinosaur = await Dinosaur.findById(dinosaurId);
+      if (!dinosaur) {
+        throw new Error('Dinosaur not found');
+      }
+
+      // Update the user's purchases array with the dinosaur details
+      const updatedUser = await User.findByIdAndUpdate(
+        user.id,
+        {
+          $push: {
+            purchases: {
+              dinosaurId: dinosaur._id,
+              age: dinosaur.age,
+              species: dinosaur.species,
+              size: dinosaur.size,
+              price: dinosaur.price,
+              imageUrl: dinosaur.imageUrl,
+              description: dinosaur.description,
+              purchasedAt: new Date(),
+            },
+          },
+        },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        throw new Error('User not found');
+      }
+
+      return dinosaur;
+    },
   },
 
   Query: {
@@ -109,7 +149,6 @@ export const resolvers = {
       return parent.isAdmin;
     },
     purchases: (parent: any) => {
-      // Simply return the purchases array stored in the user document
       return parent.purchases;
     }
   }

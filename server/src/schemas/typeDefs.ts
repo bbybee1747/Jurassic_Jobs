@@ -9,8 +9,7 @@ export const typeDefs = gql`
     price: Float!
     imageUrl: String
     description: String
-    createdAt: String
-    updatedAt: String
+    purchasedAt: String!  
   }
 
   type User {
@@ -22,7 +21,7 @@ export const typeDefs = gql`
     netWorth: Float!
     email: String!
     isAdmin: String!
-    purchases: [Purchase]!
+    purchases: [Purchase]! 
   }
 
   type AuthPayload {
@@ -77,6 +76,7 @@ export const typeDefs = gql`
     createUser(input: CreateUserInput!): User!
     updateUser(id: ID!, input: UpdateUserInput!): User!
     deleteUser(id: ID!): MessageResponse!
+    purchaseDinosaur(dinosaurId: ID!): Purchase! 
   }
 
   type Query {
