@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Navigate } from "react-router-dom";
+import axios from "axios";
 
 const GET_USERS = gql`
   query GetUsers {
@@ -187,6 +188,7 @@ const AdminPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
+  // User Management
   const {
     data: usersData,
     loading: usersLoading,
@@ -301,6 +303,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  // Dinosaur Management
   const {
     data: dinosaursData,
     loading: dinosaursLoading,
@@ -388,6 +391,28 @@ const AdminPage: React.FC = () => {
     }));
   };
 
+  // NEW: Handle image file upload for dinosaur editing
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Create form data for file upload
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+      // Adjust the endpoint URL as needed
+      const response = await axios.post("/api/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      // Assume the backend returns { url: "uploaded-image-url" }
+      const imageUrl = response.data.url;
+      setEditingDinoData((prev) => ({ ...prev, imageUrl }));
+    } catch (err) {
+      console.error("File upload error", err);
+    }
+  };
+
   const submitDinoUpdate = async (id: string) => {
     const age = parseInt(editingDinoData.age);
     const price = parseFloat(editingDinoData.price);
@@ -423,6 +448,7 @@ const AdminPage: React.FC = () => {
     <div className="min-h-screen bg-gray-900 p-10 font-sans text-white">
       <h1 className="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
 
+      {/* User Management Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Management</h2>
         {usersLoading ? (
@@ -776,6 +802,7 @@ const AdminPage: React.FC = () => {
         )}
       </section>
 
+      {/* Dinosaur Management Section */}
       <section>
         <h2 className="text-3xl font-bold mb-4">Dinosaur Management</h2>
         {dinosaursLoading ? (
@@ -866,6 +893,14 @@ const AdminPage: React.FC = () => {
                             onChange={handleEditDinoChange}
                             className="p-1 bg-gray-800 border border-gray-700 rounded"
                             autoComplete="off"
+                            placeholder="Image URL"
+                          />
+                          {/* File input for uploading an image */}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="mt-2"
                           />
                         </td>
                         <td className="px-2 py-2 border-b border-gray-700">

@@ -10,6 +10,7 @@ import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import db from "./src/config/db"; 
 import path from 'path';
 import router from "./src/controller/paymentRoutes";
+import uploadRoutes from "./src/controller/uploadRoutes";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/api/payments', router);
+app.use('/api/uploads', uploadRoutes);
 
 const context = async (integrationContext: ExpressContextFunctionArgument) => {
   const { req } = integrationContext;
