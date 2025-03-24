@@ -188,7 +188,6 @@ const AdminPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  // User Management
   const {
     data: usersData,
     loading: usersLoading,
@@ -303,7 +302,6 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // Dinosaur Management
   const {
     data: dinosaursData,
     loading: dinosaursLoading,
@@ -391,21 +389,17 @@ const AdminPage: React.FC = () => {
     }));
   };
 
-  // NEW: Handle image file upload for dinosaur editing
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // Create form data for file upload
     const formData = new FormData();
     formData.append("file", file);
     try {
-      // Adjust the endpoint URL as needed
       const response = await axios.post("/api/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      // Assume the backend returns { url: "uploaded-image-url" }
       const imageUrl = response.data.url;
       setEditingDinoData((prev) => ({ ...prev, imageUrl }));
     } catch (err) {
@@ -448,7 +442,6 @@ const AdminPage: React.FC = () => {
     <div className="min-h-screen bg-gray-900 p-10 font-sans text-white">
       <h1 className="text-4xl font-bold mb-8 text-center">Admin Dashboard</h1>
 
-      {/* User Management Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Management</h2>
         {usersLoading ? (
@@ -742,7 +735,6 @@ const AdminPage: React.FC = () => {
         </form>
       </section>
 
-      {/* New Purchases Section */}
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Purchases</h2>
         {usersLoading ? (
@@ -895,7 +887,7 @@ const AdminPage: React.FC = () => {
                             autoComplete="off"
                             placeholder="Image URL"
                           />
-                          {/* File input for uploading an image */}
+
                           <input
                             type="file"
                             accept="image/*"

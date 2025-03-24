@@ -5,7 +5,6 @@ import { Elements } from "@stripe/react-stripe-js";
 import PaymentForm from "../components/Payment";
 import ReactModal from "react-modal";
 
-// GraphQL query to fetch dinosaurs
 const GET_DINOSAURS = gql`
   query GetDinosaurs($sortBy: String) {
     dinosaurs(sortBy: $sortBy) {
@@ -20,10 +19,8 @@ const GET_DINOSAURS = gql`
   }
 `;
 
-// Load your Stripe publishable key (test mode)
 const stripePromise = loadStripe("YOUR_STRIPE_PUBLISHABLE_KEY");
 
-// Set the root element for accessibility (adjust "#root" as needed)
 ReactModal.setAppElement("#root");
 
 function Dinosaurs() {
@@ -35,19 +32,16 @@ function Dinosaurs() {
     variables: { sortBy: sortType },
   });
 
-  // Opens the modal and sets the selected dinosaur
   const openModal = (dino: any) => {
     setSelectedDino(dino);
     setIsModalOpen(true);
   };
 
-  // Closes the modal and resets the selected dinosaur
   const closeModal = () => {
     setSelectedDino(null);
     setIsModalOpen(false);
   };
 
-  // Callback after a successful payment
   const handlePaymentSuccess = () => {
     alert(`You purchased ${selectedDino.species}!`);
     closeModal();
@@ -128,7 +122,6 @@ function Dinosaurs() {
         )}
       </div>
 
-      {/* Modal for payment processing */}
       <ReactModal
         isOpen={isModalOpen}
         onRequestClose={closeModal}
