@@ -8,13 +8,12 @@ const JeepDinoGame: React.FC = () => {
   const [speed, setSpeed] = useState(5);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [topScores, setTopScores] = useState<number[]>([]); // State for top 10 high scores
+  const [topScores, setTopScores] = useState<number[]>([]);
   const animationFrameRef = useRef<number | null>(null);
 
   const moveLeft = useRef(false);
   const moveRight = useRef(false);
 
-  // 🛠️ UseRef versions of jeep and jumpCount
   const jeepRef = useRef({
     x: 100,
     y: 300,
@@ -25,14 +24,29 @@ const JeepDinoGame: React.FC = () => {
   });
   const jumpCountRef = useRef(0);
 
-  // 🏆 Function to update and retrieve top 10 high scores
   const updateTopScores = (newScore: number) => {
     const savedScores = JSON.parse(localStorage.getItem("jeepTopScores") || "[]") as number[];
     const updatedScores = [...savedScores, newScore]
-      .sort((a, b) => b - a) // Sort in descending order
-      .slice(0, 10); // Keep only top 10
+      .sort((a, b) => b - a)
+      .slice(0, 5);
     localStorage.setItem("jeepTopScores", JSON.stringify(updatedScores));
     setTopScores(updatedScores);
+  };
+
+  interface Rectangle {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }
+
+  const objectCollision = (rect1: Rectangle, rect2: Rectangle): boolean => {
+    return (
+      rect1.x < rect2.x + rect2.width &&
+      rect1.x + rect1.width > rect2.x &&
+      rect1.y < rect2.y + rect2.height &&
+      rect1.y + rect1.height > rect2.y
+    );
   };
 
   useEffect(() => {
@@ -44,8 +58,7 @@ const JeepDinoGame: React.FC = () => {
     canvas.width = 800;
     canvas.height = 400;
 
-    let obstacles: { x: number; y: number; width: number; height: number; cleared: boolean; isGoldenEgg: boolean }[] =
-      [];
+    let obstacles = [];
     let pterodactyl = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false };
     let charles = { x: -100, y: 50, width: 80, height: 60, speed: 3, active: false };
     let gravity = 0.2;
@@ -79,7 +92,6 @@ const JeepDinoGame: React.FC = () => {
     rockImage.src = "/rock.png";
     charlesImage.src = "/charles.png";
 
-    // 🏆 Load high score and top scores from localStorage
     const savedHighScore = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
     setHighScore(savedHighScore);
 
@@ -90,9 +102,7 @@ const JeepDinoGame: React.FC = () => {
       if (event.code === "Space") {
         event.preventDefault();
         const jeep = jeepRef.current;
-
         if (!isRunning) return;
-
         if (!jeep.jumping || jumpCountRef.current < 2) {
           jeep.dy = -8;
           jeep.jumping = true;
@@ -136,7 +146,6 @@ const JeepDinoGame: React.FC = () => {
       if (!ctx) return;
 
       const jeep = jeepRef.current;
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const skyGradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
@@ -188,50 +197,34 @@ const JeepDinoGame: React.FC = () => {
         obs.x -= speed;
         if (obs.x + obs.width < 0) obstacles.splice(index, 1);
 
-        if (obs.isGoldenEgg) {
-          ctx.drawImage(goldeneggImage, obs.x, obs.y, obs.width, obs.height);
-        } else {
-          ctx.drawImage(rockImage, obs.x, obs.y, obs.width, obs.height);
-        }
-
-        const jeepBottom = jeep.y + jeep.height;
-        const jeepRight = jeep.x + jeep.width;
-        const jeepLeft = jeep.x;
-        const obsTop = obs.y;
-        const obsRight = obs.x + obs.width;
-        const obsLeft = obs.x;
-
-        if (
-          jeepRight > obsLeft &&
-          jeepLeft < obsRight &&
-          jeepBottom >= obsTop + 5 &&
-          jeep.y + jeep.height - obs.y < 20
-        ) {
+        const obstacleRect = { x: obs.x, y: obs.y, width: obs.width, height: obs.height };
+        if (objectCollision(jeep, obstacleRect)) {
           const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
           if (score > prevHigh) {
             localStorage.setItem("jeepHighScore", score.toString());
             setHighScore(score);
           }
-
-          // 🏆 Update top scores
           updateTopScores(score);
-
           setIsRunning(false);
           setIsGameOver(true);
           if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
           return;
         }
 
-        if (!obs.cleared && obsRight < jeepLeft) {
+        if (obs.isGoldenEgg) {
+          ctx.drawImage(goldeneggImage, obs.x, obs.y, obs.width, obs.height);
+        } else {
+          ctx.drawImage(rockImage, obs.x, obs.y, obs.width, obs.height);
+        }
+
+        if (!obs.cleared && obs.x + obs.width < jeep.x) {
           setScore((prev) => {
             const newScore = prev + (obs.isGoldenEgg ? 5 : 1);
-
             const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
             if (newScore > prevHigh) {
               localStorage.setItem("jeepHighScore", newScore.toString());
               setHighScore(newScore);
             }
-
             return newScore;
           });
           obs.cleared = true;
@@ -242,28 +235,19 @@ const JeepDinoGame: React.FC = () => {
         pterodactyl.x -= pterodactyl.speed;
         ctx.drawImage(pterodactylImage, pterodactyl.x, pterodactyl.y, pterodactyl.width, pterodactyl.height);
 
-        const jeepBottom = jeep.y + jeep.height;
-        const jeepRight = jeep.x + jeep.width;
-        const jeepLeft = jeep.x;
-        const pteroBottom = pterodactyl.y + pterodactyl.height;
-        const pteroRight = pterodactyl.x + pterodactyl.width;
-        const pteroLeft = pterodactyl.x;
-
-        if (
-          jeepRight > pteroLeft &&
-          jeepLeft < pteroRight &&
-          jeepBottom > pterodactyl.y &&
-          jeep.y < pteroBottom
-        ) {
+        const pteroRect = {
+          x: pterodactyl.x,
+          y: pterodactyl.y,
+          width: pterodactyl.width,
+          height: pterodactyl.height,
+        };
+        if (objectCollision(jeep, pteroRect)) {
           const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
           if (score > prevHigh) {
             localStorage.setItem("jeepHighScore", score.toString());
             setHighScore(score);
           }
-
-          // 🏆 Update top scores
           updateTopScores(score);
-
           setIsRunning(false);
           setIsGameOver(true);
           if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
@@ -279,7 +263,6 @@ const JeepDinoGame: React.FC = () => {
         ctx.fillStyle = "black";
         ctx.font = "16px Arial";
         ctx.fillText("Happy Coding", charles.x, charles.y + charles.height + 20);
-
         if (charles.x + charles.width < 0) charles.active = false;
       }
 
@@ -312,9 +295,9 @@ const JeepDinoGame: React.FC = () => {
       <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Extinction Drift</h2>
       <h2 style={{ margin: "10px", fontSize: "20px", color: "white" }}>Score: {score}</h2>
       <canvas ref={canvasRef} style={{ border: "2px groove white", display: "block", margin: "auto" }} />
-      {!isLoaded && <p>⏳ Loading game...</p>}
+      {!isLoaded && <p>\u23F3 Loading game...</p>}
       <div style={{ position: "absolute", bottom: "200px", width: "100%" }}>
-        <h2 style={{ fontSize: "20px", color: "#FFD700" }}>🏆 High Score: {highScore}</h2>
+        <h2 style={{ fontSize: "20px", color: "#FFD700" }}>High Score: {highScore}</h2>
       </div>
       {isGameOver && (
         <div
@@ -330,10 +313,10 @@ const JeepDinoGame: React.FC = () => {
             Game Over! You hit an obstacle!
           </h2>
           <h3 style={{ margin: "10px", fontSize: "20px", color: "#FFD700" }}>
-            🏆 High Score: {highScore}
+            \ud83c\udfc6 High Score: {highScore}
           </h3>
           <div style={{ margin: "10px", fontSize: "18px", color: "white" }}>
-            <h4>Top 10 High Scores:</h4>
+            <h4>Top 5 High Scores:</h4>
             <ol>
               {topScores.map((score, index) => (
                 <li key={index}>{score}</li>
@@ -360,7 +343,8 @@ const JeepDinoGame: React.FC = () => {
   );
 };
 
-export default JeepDinoGame; 
+export default JeepDinoGame;
+
 const rgba = (r: number, g: number, b: number, a: number): string => {
   return `rgba(${r}, ${g}, ${b}, ${a})`;
 };
