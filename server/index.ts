@@ -11,16 +11,16 @@ import db from "./src/config/db";
 import path from "path";
 import router from "./src/controller/paymentRoutes";
 import uploadRoutes from "./src/controller/uploadRoutes";
-import fileRoutes from "./src/controller/fileRoutes";
 
 dotenv.config();
+
+db();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use("/api/payments", router);
 app.use("/api", uploadRoutes);
-app.use("/api", fileRoutes);
 
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -42,8 +42,6 @@ const context = async (integrationContext: ExpressContextFunctionArgument) => {
 };
 
 const startServer = async () => {
-
-  await db();
   const server = new ApolloServer({ schema });
   await server.start();
 
