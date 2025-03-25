@@ -1,6 +1,6 @@
 import Pterodactyle from "../assets/Pterodactyl.webp";
 import tRex from "../assets/t-rex.jpg";
-import tricerotops from "../assets/Tricerotops.jpg";
+import Pteranodon from "../assets/Glide-Pteranodon.webp";
 
 const HeroBanner = () => {
   return (
@@ -55,8 +55,8 @@ function Home() {
           </div>
           <div className="bg-gray-700 p-6 border border-gray-600 rounded-lg shadow-md text-center">
             <img
-              src={tricerotops}
-              alt="Triceratops"
+              src={Pteranodon}
+              alt="Pteranodon"
               className="w-48 h-48 mx-auto rounded-md mb-4"
             />
             <h2 className="text-xl font-semibold text-white">Triceratops</h2>
