@@ -395,11 +395,8 @@ const AdminPage: React.FC = () => {
     const formData = new FormData();
     formData.append("file", file);
     try {
-      const response = await axios.post("/api/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post("/api/upload", formData);
+
       const imageUrl = response.data.url;
       setEditingDinoData((prev) => ({ ...prev, imageUrl }));
     } catch (err) {
