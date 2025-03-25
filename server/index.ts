@@ -8,7 +8,7 @@ import { expressMiddleware } from "@apollo/server/express4";
 import schema from "./src/schemas";
 import { ExpressContextFunctionArgument } from "@apollo/server/express4";
 import db from "./src/config/db"; 
-import path from 'path';
+import path from "path";
 import router from "./src/controller/paymentRoutes";
 import uploadRoutes from "./src/controller/uploadRoutes";
 
@@ -19,8 +19,11 @@ db();
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/api/payments', router);
-app.use('/api/uploads', uploadRoutes);
+app.use("/api/payments", router);
+app.use("/api", uploadRoutes);
+
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const context = async (integrationContext: ExpressContextFunctionArgument) => {
   const { req } = integrationContext;
@@ -46,14 +49,13 @@ const startServer = async () => {
 
   app.use("/graphql", express.json(), graphqlMiddleware);
 
-  if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/frontend/dist')));
+  if (process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "../client/frontend/dist")));
 
-    app.get('*', (_req, res) => {
-      res.sendFile(path.join(__dirname, '../client/frontend/dist/index.html'));
+    app.get("*", (_req, res) => {
+      res.sendFile(path.join(__dirname, "../client/frontend/dist/index.html"));
     });
   }
-
 
   const PORT = process.env.PORT || 5173;
   app.listen(PORT, () => {
