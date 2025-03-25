@@ -19,7 +19,9 @@ const GET_DINOSAURS = gql`
   }
 `;
 
-const stripePromise = loadStripe("YOUR_STRIPE_PUBLISHABLE_KEY");
+const stripePromise = loadStripe(
+  "pk_test_51R5tEE2L3rFkWURHbcQqmQTW3vDPilDObNkljbSGWm692rXVh7qRXyVS9kLLznlbYhfX0d0x15g5kQ51Af9knMAu00Qd1YnWK1"
+);
 
 ReactModal.setAppElement("#root");
 
