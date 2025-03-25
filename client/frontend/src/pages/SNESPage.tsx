@@ -7,6 +7,7 @@ const JeepDinoGame: React.FC = () => {
   const [isRunning, setIsRunning] = useState(true);
   const [speed, setSpeed] = useState(5);
   const [score, setScore] = useState(0);
+  const scoreRef = useRef(0); // Track score immediately
   const [highScore, setHighScore] = useState(0);
   const [topScores, setTopScores] = useState<number[]>([]);
   const animationFrameRef = useRef<number | null>(null);
@@ -200,11 +201,11 @@ const JeepDinoGame: React.FC = () => {
         const obstacleRect = { x: obs.x, y: obs.y, width: obs.width, height: obs.height };
         if (objectCollision(jeep, obstacleRect)) {
           const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
-          if (score > prevHigh) {
-            localStorage.setItem("jeepHighScore", score.toString());
-            setHighScore(score);
+          if (scoreRef.current > prevHigh) {
+            localStorage.setItem("jeepHighScore", scoreRef.current.toString());
+            setHighScore(scoreRef.current);
           }
-          updateTopScores(score);
+          updateTopScores(scoreRef.current);
           setIsRunning(false);
           setIsGameOver(true);
           if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
@@ -220,6 +221,7 @@ const JeepDinoGame: React.FC = () => {
         if (!obs.cleared && obs.x + obs.width < jeep.x) {
           setScore((prev) => {
             const newScore = prev + (obs.isGoldenEgg ? 5 : 1);
+            scoreRef.current = newScore;
             const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
             if (newScore > prevHigh) {
               localStorage.setItem("jeepHighScore", newScore.toString());
@@ -243,11 +245,11 @@ const JeepDinoGame: React.FC = () => {
         };
         if (objectCollision(jeep, pteroRect)) {
           const prevHigh = parseInt(localStorage.getItem("jeepHighScore") || "0", 10);
-          if (score > prevHigh) {
-            localStorage.setItem("jeepHighScore", score.toString());
-            setHighScore(score);
+          if (scoreRef.current > prevHigh) {
+            localStorage.setItem("jeepHighScore", scoreRef.current.toString());
+            setHighScore(scoreRef.current);
           }
-          updateTopScores(score);
+          updateTopScores(scoreRef.current);
           setIsRunning(false);
           setIsGameOver(true);
           if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
@@ -295,7 +297,7 @@ const JeepDinoGame: React.FC = () => {
       <h2 style={{ margin: "10px", fontSize: "24px", color: "white" }}>Extinction Drift</h2>
       <h2 style={{ margin: "10px", fontSize: "20px", color: "white" }}>Score: {score}</h2>
       <canvas ref={canvasRef} style={{ border: "2px groove white", display: "block", margin: "auto" }} />
-      {!isLoaded && <p>\u23F3 Loading game...</p>}
+      {!isLoaded && <p>⏳ Loading game...</p>}
       <div style={{ position: "absolute", bottom: "200px", width: "100%" }}>
         <h2 style={{ fontSize: "20px", color: "#FFD700" }}>High Score: {highScore}</h2>
       </div>
@@ -318,7 +320,7 @@ const JeepDinoGame: React.FC = () => {
           <div style={{ margin: "10px", fontSize: "18px", color: "white" }}>
             <h4>Top 5 High Scores:</h4>
             <ol>
-              {topScores.map((score, index) => (
+              {[...topScores].sort((a, b) => b - a).map((score, index) => (
                 <li key={index}>{score}</li>
               ))}
             </ol>
