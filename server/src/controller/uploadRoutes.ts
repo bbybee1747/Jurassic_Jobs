@@ -8,6 +8,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 router.post("/upload", upload.single("file"), (req: express.Request, res: express.Response): void => {
+
+  console.log("Uploading file:", req.file);
   if (!req.file) {
     res.status(400).json({ error: "No file uploaded" });
     return;
