@@ -29,7 +29,12 @@ router.post("/upload", upload.single("file"), (req: express.Request, res: expres
     });
   } catch (err) {
     console.error("Error opening upload stream:", err);
-    return res.status(500).json({ error: "Error initializing file upload" });
+    res.status(500).json({ error: "Error initializing file upload" });
+  }
+
+  if (!uploadStream) {
+    res.status(500).json({ error: "Upload stream could not be initialized" });
+    return;
   }
 
   // Handle errors during the upload process
