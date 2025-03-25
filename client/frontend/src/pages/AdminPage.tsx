@@ -392,11 +392,12 @@ const AdminPage: React.FC = () => {
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    console.log("Selected file:", file);
     const formData = new FormData();
     formData.append("file", file);
     try {
       const response = await axios.post("/api/upload", formData);
-
+      console.log("Upload response:", response.data);
       const imageUrl = response.data.url;
       setEditingDinoData((prev) => ({ ...prev, imageUrl }));
     } catch (err) {
@@ -629,7 +630,6 @@ const AdminPage: React.FC = () => {
             </table>
           </div>
         )}
-
         <form onSubmit={handleAddUser} className="mt-4 space-y-4">
           <h3 className="text-2xl font-semibold">Add New User</h3>
           <div className="flex flex-col md:flex-row md:space-x-4">
@@ -731,7 +731,6 @@ const AdminPage: React.FC = () => {
           </button>
         </form>
       </section>
-
       <section className="mb-12">
         <h2 className="text-3xl font-bold mb-4">User Purchases</h2>
         {usersLoading ? (
@@ -790,7 +789,6 @@ const AdminPage: React.FC = () => {
           </div>
         )}
       </section>
-
       {/* Dinosaur Management Section */}
       <section>
         <h2 className="text-3xl font-bold mb-4">Dinosaur Management</h2>
@@ -884,7 +882,6 @@ const AdminPage: React.FC = () => {
                             autoComplete="off"
                             placeholder="Image URL"
                           />
-
                           <input
                             type="file"
                             accept="image/*"
@@ -973,7 +970,6 @@ const AdminPage: React.FC = () => {
             </table>
           </div>
         )}
-
         <form onSubmit={handleAddDinosaur} className="mt-4 space-y-4">
           <h3 className="text-2xl font-semibold">Add New Dinosaur</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

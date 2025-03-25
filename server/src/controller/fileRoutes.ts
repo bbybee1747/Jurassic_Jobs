@@ -3,23 +3,26 @@ import { gfs } from "../config/db";
 
 const router = express.Router();
 
-router.get("/file/:filename", (req, res) => {
+router.get("/file/:filename", (req: express.Request, res: express.Response) => {
   const { filename } = req.params;
+  if (!filename) {
+    res.status(400).json({ error: "Filename is required" });
+    return;
+  }
 
   try {
     const downloadStream = gfs.openDownloadStreamByName(filename);
-    
-    res.set("Content-Type", "application/octet-stream");
 
-    downloadStream.pipe(res);
-
-    downloadStream.on("error", (err: Error) => {
-      console.error("Error streaming file:", err);
-      res.status(500).json({ error: "Error retrieving file" });
+    downloadStream.on("error", (err) => {
+      console.error("Error downloading file:", err);
+      return res.status(404).json({ error: "File not found" });
     });
-  } catch (error) {
-    console.error("File retrieval error:", error);
-    res.status(404).json({ error: "File not found" });
+
+    res.set("Content-Type", "application/octet-stream");
+    downloadStream.pipe(res);
+  } catch (err) {
+    console.error("Error retrieving file:", err);
+    res.status(500).json({ error: "Error retrieving file" });
   }
 });
 
