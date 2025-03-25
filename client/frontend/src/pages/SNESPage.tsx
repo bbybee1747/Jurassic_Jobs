@@ -313,7 +313,7 @@ const JeepDinoGame: React.FC = () => {
             Game Over! You hit an obstacle!
           </h2>
           <h3 style={{ margin: "10px", fontSize: "20px", color: "#FFD700" }}>
-            \ud83c\udfc6 High Score: {highScore}
+            High Score: {highScore}
           </h3>
           <div style={{ margin: "10px", fontSize: "18px", color: "white" }}>
             <h4>Top 5 High Scores:</h4>
