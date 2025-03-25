@@ -59,9 +59,9 @@ function Home() {
               alt="Pteranodon"
               className="w-48 h-48 mx-auto rounded-md mb-4"
             />
-            <h2 className="text-xl font-semibold text-white">Triceratops</h2>
+            <h2 className="text-xl font-semibold text-white">Pternodon</h2>
             <p className="text-gray-300">
-              A distinctive herbivore recognized by its iconic trio of horns.
+              A Slightly less murdery version of the pterodactyl.
             </p>
           </div>
         </div>
