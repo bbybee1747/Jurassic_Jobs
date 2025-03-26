@@ -1,6 +1,6 @@
 import Dinosaur from "../models/Dinosaur";
 import { AuthenticationError, ForbiddenError } from "apollo-server-express";
-import axios from "axios";
+import Bun from 'bun'
 
 export const dinosaurResolvers = {
   Query: {

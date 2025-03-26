@@ -23,7 +23,7 @@ app.use("/api/payments", router);
 app.use("/api", uploadRoutes);
 
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const context = async (integrationContext: ExpressContextFunctionArgument) => {
   const { req } = integrationContext;
